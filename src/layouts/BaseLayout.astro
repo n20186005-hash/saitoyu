@@ -1,0 +1,80 @@
+---
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const {
+  title = '日暮里 斉藤湯｜湯気の向こう、日暮里の日常へ。',
+  description = 'JR日暮里駅から徒歩約3分。軟水、高濃度炭酸泉、露天岩風呂を楽しめる「日暮里 斉藤湯」の一日旅ガイド。アクセス、周辺グルメ、周辺散策、端末内で作れる旅の記念カードを掲載。',
+  image = '/images/saito-yu-exterior.jpg',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const imageURL = new URL(image, Astro.site ?? Astro.url.origin);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Place',
+  name: '日暮里 斉藤湯',
+  alternateName: 'Nippori Saito-yu',
+  description: '東京都荒川区東日暮里にある銭湯。軟水、高濃度炭酸泉、露天岩風呂などを備える。',
+  image: imageURL.toString(),
+  telephone: '+81-3-3801-4022',
+  address: {
+    '@type': 'PostalAddress',
+    postalCode: '116-0014',
+    addressRegion: '東京都',
+    addressLocality: '荒川区',
+    streetAddress: '東日暮里6-59-2',
+    addressCountry: 'JP',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 35.729335,
+    longitude: 139.773033,
+  },
+  publicAccess: true,
+  smokingAllowed: false,
+};
+---
+
+<!doctype html>
+<html lang="ja" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#142b4a" />
+    <meta name="color-scheme" content="light" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ja_JP" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:alt" content="日暮里 斉藤湯の外観" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)}></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-HXM22WWPKP');
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
+    <slot />
+  </body>
+</html>

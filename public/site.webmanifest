@@ -1,0 +1,12 @@
+{
+  "name": "日暮里 斉藤湯ガイド",
+  "short_name": "斉藤湯ガイド",
+  "lang": "ja",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4efe6",
+  "theme_color": "#142b4a",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

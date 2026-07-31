@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="15" fill="#142b4a"/>
+  <path d="M12 17h40v8H12z" fill="#f1e8d7"/>
+  <path d="M19 25h26v27H19z" fill="#f7f1e7"/>
+  <path d="M32 25v27" stroke="#142b4a" stroke-width="2"/>
+  <text x="32" y="45" text-anchor="middle" font-size="22" font-family="sans-serif" font-weight="700" fill="#c96f4c">ゆ</text>
+</svg>

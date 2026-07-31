@@ -1,0 +1,522 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import MemoryCardStudio from '@/components/MemoryCardStudio.astro';
+
+const mapUrl = 'https://www.google.com/maps/place/Sait%C5%8D+Yu/data=!4m7!3m6!1s0x60188e7f59a32057:0xe076bfad049e7598!8m2!3d35.729335!4d139.773033!16s%2Fg%2F11bw2j17zz';
+
+const bathFeatures = [
+  {
+    number: '01',
+    name: '高濃度炭酸泉',
+    copy: '細かな気泡に包まれながら、ぬるめのお湯でゆっくり。長く浸かりたい日にうれしい人気の浴槽です。',
+  },
+  {
+    number: '02',
+    name: '露天岩風呂',
+    copy: '街なかにいながら、外気を感じられる小さな余白。湯気と夜風が一日の速度を静かに落としてくれます。',
+  },
+  {
+    number: '03',
+    name: 'シルキーバス',
+    copy: '微細な泡で白く見える、なめらかな湯。やさしい肌あたりの軟水とともに楽しめます。',
+  },
+  {
+    number: '04',
+    name: 'あつ湯・水風呂',
+    copy: 'しっかり温まりたい人向けのあつ湯と、すっきり整える水風呂。体調に合わせて無理なくどうぞ。',
+  },
+];
+
+const foods = [
+  {
+    number: '01',
+    name: '馬賊 日暮里店',
+    type: '手打拉麺・担々麺',
+    distance: '日暮里駅前 / 徒歩約4分',
+    copy: '店頭で打つ力強い麺が主役。湯上がりに、もちもちの麺と濃いめの一杯を楽しみたい日に。',
+    tag: 'しっかり食べる',
+  },
+  {
+    number: '02',
+    name: '羽二重団子 本店',
+    type: '団子・甘味',
+    distance: '東日暮里 / 徒歩約8分',
+    copy: '文政二年創業と伝わる日暮里の甘味処。きめ細かな団子で、散歩の途中に静かなひと休みを。',
+    tag: '日暮里らしい甘味',
+  },
+  {
+    number: '03',
+    name: '一由そば',
+    type: '立ち食いそば',
+    distance: '西日暮里方面 / 徒歩約13分',
+    copy: '気軽で早く、天ぷらの選択肢も豊富。朝風呂ではなくても、遅い時間の腹ごしらえに頼れる一軒。',
+    tag: '気軽・24時間営業',
+  },
+  {
+    number: '04',
+    name: '談話室 ニュートーキョー',
+    type: '純喫茶・洋食',
+    distance: '日暮里駅前 / 徒歩約4分',
+    copy: '大きな窓とレトロな空気が残る駅前喫茶。入浴前の待ち合わせや、湯上がりの余韻に向いています。',
+    tag: 'レトロ喫茶',
+  },
+];
+
+const nearbySpots = [
+  {
+    name: '日暮里繊維街',
+    time: '徒歩約8〜12分',
+    copy: '生地、ボタン、革、手芸用品が集まる約1kmの通り。ものづくり好きなら、入浴前に時間を多めに。',
+  },
+  {
+    name: '夕やけだんだん',
+    time: '徒歩約10分',
+    copy: '谷中銀座へ下る階段。名前のとおり夕景が似合い、下町散歩の始まりと終わりをつなぎます。',
+  },
+  {
+    name: '谷中銀座商店街',
+    time: '徒歩約12分',
+    copy: '惣菜、甘味、雑貨が並ぶ昔ながらの商店街。食べ歩きは、銭湯に入る前の軽めがおすすめです。',
+  },
+  {
+    name: '下御隠殿橋',
+    time: '徒歩約6分',
+    copy: 'JRや新幹線が行き交う線路を見下ろせる橋。短時間でも日暮里らしい鉄道風景に出会えます。',
+  },
+  {
+    name: '朝倉彫塑館',
+    time: '徒歩約10分',
+    copy: '彫刻家・朝倉文夫の住居兼アトリエ。建築、中庭、彫刻を静かに巡りたい日に組み合わせたい場所です。',
+  },
+  {
+    name: '諏方神社',
+    time: '徒歩約14分',
+    copy: '西日暮里の高台に鎮座する地域の鎮守。境内から線路側を望み、町の起伏を感じる散歩へ。',
+  },
+];
+
+const faqs = [
+  {
+    question: '手ぶらでも入れますか？',
+    answer: 'シャンプーやボディソープの備え付けが案内されており、貸しタオルもあります。料金や在庫は当日現地でご確認ください。',
+  },
+  {
+    question: 'サウナはありますか？',
+    answer: 'サウナを主目的とする施設ではありません。高濃度炭酸泉、露天岩風呂、シルキーバス、あつ湯、水風呂など、浴槽の違いを楽しむ銭湯です。',
+  },
+  {
+    question: '大きな荷物を持って行けますか？',
+    answer: 'ランナー向けの荷物預かりサービスが案内されています。ただし、スーツケースなど大型荷物の対応可否や受付条件は事前に電話で確認すると安心です。',
+  },
+  {
+    question: '子どもと一緒に利用できますか？',
+    answer: '家族でも利用できる地域の銭湯です。浴室では走らない、湯船にタオルを入れないなど、周囲に配慮して楽しみましょう。',
+  },
+  {
+    question: '営業時間は何時までですか？',
+    answer: '東京銭湯の案内では14:00〜23:30、最終受付23:00です。一方で23:00閉店とする案内もあるため、遅い時間に向かう場合は当日確認してください。金曜は定休日です。',
+  },
+];
+---
+
+<BaseLayout>
+  <header class="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-indigo/88 text-white backdrop-blur-xl">
+    <div class="container-shell flex h-[72px] items-center justify-between gap-6">
+      <a href="#top" class="group flex items-center gap-3" aria-label="ページ先頭へ">
+        <span class="grid size-9 place-items-center rounded-lg bg-paper text-lg font-bold text-copper transition group-hover:rotate-3">ゆ</span>
+        <span class="font-serif text-lg font-semibold tracking-[0.12em]">日暮里 斉藤湯</span>
+      </a>
+
+      <nav class="hidden items-center gap-7 text-[0.76rem] font-bold tracking-[0.08em] text-white/72 lg:flex" aria-label="メインナビゲーション">
+        <a class="transition hover:text-white" href="#baths">お風呂</a>
+        <a class="transition hover:text-white" href="#guide">利用案内</a>
+        <a class="transition hover:text-white" href="#food">周辺グルメ</a>
+        <a class="transition hover:text-white" href="#access">交通</a>
+        <a class="transition hover:text-white" href="#nearby">周辺スポット</a>
+        <a class="rounded-full border border-white/22 px-4 py-2.5 text-white transition hover:bg-white hover:text-indigo" href="#memory-card">記念カードを作る</a>
+      </nav>
+
+      <details class="relative lg:hidden">
+        <summary class="grid size-10 cursor-pointer list-none place-items-center rounded-full border border-white/20" aria-label="メニューを開く">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7h14M5 12h14M5 17h14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </summary>
+        <nav class="absolute right-0 mt-3 grid w-56 gap-1 rounded-2xl border border-white/10 bg-indigo-deep p-3 text-sm shadow-2xl" aria-label="モバイルナビゲーション">
+          <a class="rounded-xl px-4 py-3 hover:bg-white/8" href="#baths">お風呂</a>
+          <a class="rounded-xl px-4 py-3 hover:bg-white/8" href="#guide">利用案内</a>
+          <a class="rounded-xl px-4 py-3 hover:bg-white/8" href="#food">周辺グルメ</a>
+          <a class="rounded-xl px-4 py-3 hover:bg-white/8" href="#access">詳しいアクセス</a>
+          <a class="rounded-xl px-4 py-3 hover:bg-white/8" href="#nearby">周辺スポット</a>
+          <a class="rounded-xl bg-copper px-4 py-3 font-bold" href="#memory-card">記念カードを作る</a>
+        </nav>
+      </details>
+    </div>
+  </header>
+
+  <main id="main">
+    <section id="top" class="relative min-h-[760px] overflow-hidden bg-indigo pt-[72px] text-white lg:min-h-screen">
+      <div class="absolute inset-0">
+        <img class="h-full w-full object-cover object-center" src="/images/saito-yu-exterior.webp" alt="日暮里 斉藤湯の入口とのれん" width="640" height="480" fetchpriority="high" />
+        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,25,45,.95)_0%,rgba(9,25,45,.78)_42%,rgba(9,25,45,.28)_75%,rgba(9,25,45,.55)_100%)]"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(9,25,45,.82)_0%,transparent_46%)]"></div>
+      </div>
+
+      <div class="washi-noise relative z-10 flex min-h-[688px] items-end lg:min-h-[calc(100vh-72px)]">
+        <div class="container-shell grid items-end gap-10 pb-12 pt-24 lg:grid-cols-[1fr_300px] lg:pb-16">
+          <div class="reveal max-w-4xl">
+            <div class="mb-7 flex flex-wrap items-center gap-3 text-[0.68rem] font-extrabold tracking-[0.18em] text-white/65">
+              <span class="rounded-full border border-white/22 px-3 py-2">JR日暮里駅 徒歩約3分</span>
+              <span class="rounded-full border border-white/22 px-3 py-2">金曜定休</span>
+            </div>
+            <p class="font-serif text-lg tracking-[0.18em] text-wood sm:text-2xl">湯気の向こう、</p>
+            <h1 class="mt-2 font-serif text-[clamp(3.6rem,10vw,8.8rem)] font-semibold leading-[0.92] tracking-[-0.065em]">
+              日暮里の<br /><span class="ml-[0.55em]">日常へ。</span>
+            </h1>
+            <p class="mt-8 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
+              軟水のやさしさ、高濃度炭酸泉の細かな泡、露天岩風呂を抜ける夜風。旅の予定を一度ほどいて、東京の「いつものお風呂」に入る時間です。
+            </p>
+            <div class="mt-9 flex flex-wrap gap-3">
+              <a href="#guide" class="inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-paper px-6 font-bold text-indigo transition hover:-translate-y-0.5 hover:bg-white">
+                はじめての利用案内
+                <svg class="size-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </a>
+              <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-white/25 bg-white/8 px-6 font-bold text-white backdrop-blur transition hover:bg-white/14">
+                地図を開く
+                <svg class="size-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.7"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="hidden justify-self-end lg:block">
+            <div class="relative h-40 w-28 text-white/60" aria-hidden="true">
+              <svg class="absolute inset-0 h-full w-full" viewBox="0 0 112 160" fill="none">
+                <path class="steam-line" d="M32 135c-16-24 16-34 1-56-13-20 11-31 4-50" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                <path class="steam-line" d="M58 141c-15-21 15-37 1-59-13-20 12-33 5-57" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+                <path class="steam-line" d="M83 135c-13-20 11-32 0-51-12-20 8-30 3-49" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="absolute bottom-0 left-1/2 z-20 hidden -translate-x-1/2 translate-y-1/2 lg:block">
+        <a href="#story" class="grid size-20 place-items-center rounded-full border-[10px] border-indigo bg-copper text-white shadow-2xl transition hover:scale-105" aria-label="次のセクションへ">
+          <svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <section id="story" class="section-pad overflow-hidden">
+      <div class="container-shell">
+        <div class="grid items-center gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-20">
+          <div class="relative">
+            <div class="absolute -left-14 -top-14 -z-10 size-64 rounded-full border border-aqua/35"></div>
+            <div class="relative overflow-hidden rounded-[2rem] shadow-[0_30px_90px_rgba(13,29,50,.16)]">
+              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-bath.webp" alt="斉藤湯の明るい浴室" width="680" height="452" loading="lazy" />
+              <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-indigo/85 to-transparent p-7 pt-24 text-white">
+                <p class="font-serif text-2xl">清潔さと、下町の親しみ。</p>
+              </div>
+            </div>
+            <div class="absolute -bottom-7 -right-3 rounded-2xl bg-paper px-6 py-5 shadow-xl sm:right-8">
+              <p class="text-4xl font-light text-copper">徒歩<span class="ml-1 font-serif">3分</span></p>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="section-title">駅前の速さから、湯船の時間へ。</h2>
+            <div class="mt-8 space-y-6 text-base leading-8 text-ink/72">
+              <p>日暮里 斉藤湯は、JR・京成の日暮里駅から歩いて約3分。空港や都心からアクセスしやすい場所にありながら、扉の向こうには地域の日常が続いています。</p>
+              <p>館内で使う水は、肌あたりのやわらかな軟水と案内されています。高濃度炭酸泉、シルキーバス、露天岩風呂、あつ湯、水風呂など、温度と感触の違いを行き来しながら、自分のペースを見つけられる銭湯です。</p>
+            </div>
+            <div class="mt-9 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-indigo/10 bg-indigo/10 sm:grid-cols-4">
+              <div class="bg-paper-light p-5"><p class="font-serif text-3xl text-indigo">軟水</p><p class="mt-2 text-xs leading-5 text-ink/55">浴槽・シャワー</p></div>
+              <div class="bg-paper-light p-5"><p class="font-serif text-3xl text-indigo">露天</p><p class="mt-2 text-xs leading-5 text-ink/55">岩風呂あり</p></div>
+              <div class="bg-paper-light p-5"><p class="font-serif text-3xl text-indigo">炭酸</p><p class="mt-2 text-xs leading-5 text-ink/55">ぬるめでゆっくり</p></div>
+              <div class="bg-paper-light p-5"><p class="font-serif text-3xl text-indigo">手ぶら</p><p class="mt-2 text-xs leading-5 text-ink/55">備品・貸タオル</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="baths" class="section-pad bg-paper">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">温度と泡を、ゆっくり巡る。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">サウナ中心ではなく、個性の違う浴槽を味わう場所。無理に全部入らず、その日の体調に合う湯を選びましょう。</p>
+        </div>
+
+        <div class="mt-14 grid gap-px overflow-hidden rounded-[2rem] border border-indigo/10 bg-indigo/10 md:grid-cols-2">
+          {bathFeatures.map((bath) => (
+            <article class="group relative overflow-hidden bg-paper-light p-7 transition hover:bg-white sm:p-10">
+              <div class="flex items-start justify-between gap-4">
+                <span class="font-mono text-xs tracking-[0.16em] text-copper">{bath.number}</span>
+                <svg class="size-12 text-aqua/60 transition group-hover:scale-110 group-hover:text-aqua" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                  <path d="M9 29c3.5-5 7.5-5 11 0s7.5 5 11 0 7.5-5 11 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M13 36c2.7-3.6 5.7-3.6 8.4 0s5.7 3.6 8.4 0 5.7-3.6 8.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M20 22c-5-7 5-10 0-17M31 22c-5-7 5-10 0-17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <h3 class="mt-10 font-serif text-3xl font-semibold text-indigo sm:text-4xl">{bath.name}</h3>
+              <p class="mt-5 max-w-lg text-sm leading-7 text-ink/65">{bath.copy}</p>
+            </article>
+          ))}
+        </div>
+
+        <div class="mt-8 grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
+          <div class="overflow-hidden rounded-[1.75rem]">
+            <img class="h-full min-h-72 w-full object-cover" src="/images/saito-yu-silky.webp" alt="白い微細な泡が特徴のシルキーバス" width="680" height="506" loading="lazy" />
+          </div>
+          <div class="flex flex-col justify-center rounded-[1.75rem] bg-indigo p-8 text-white sm:p-10">
+            <p class="font-serif text-3xl leading-snug">「長く入る」より、<br />「心地よく上がる」。</p>
+            <p class="mt-5 text-sm leading-7 text-white/65">水分をとり、体調に合わせ、熱さを我慢しないこと。旅の疲れがある日は、ぬるめの炭酸泉を中心に短めの入浴から始めましょう。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="guide" class="section-pad">
+      <div class="container-shell">
+        <div class="grid gap-12 lg:grid-cols-[0.72fr_1.28fr] lg:gap-20">
+          <div>
+            <h2 class="section-title">初めてでも、いつものように。</h2>
+            <p class="section-lead mt-7">券を買い、靴を預け、体を洗ってから湯船へ。日本の銭湯は、少しの作法を知るだけでぐっと気楽になります。</p>
+            <div class="mt-9 overflow-hidden rounded-[1.75rem]">
+              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-wash-area.webp" alt="斉藤湯の洗い場" width="680" height="452" loading="lazy" />
+            </div>
+          </div>
+
+          <div>
+            <div class="card-surface overflow-hidden">
+              <div class="grid gap-px bg-indigo/10 sm:grid-cols-2">
+                <div class="bg-white/85 p-6 sm:p-8">
+                  <p class="text-xs font-bold tracking-[0.16em] text-copper">営業時間</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">14:00–23:30</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">最終受付 23:00。案内元により23:00閉店との表記もあるため、遅い時間は当日確認を。</p>
+                </div>
+                <div class="bg-white/85 p-6 sm:p-8">
+                  <p class="text-xs font-bold tracking-[0.16em] text-copper">定休日</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">毎週 金曜日</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">祝日、設備点検、臨時営業などで変更される場合があります。</p>
+                </div>
+                <div class="bg-white/85 p-6 sm:p-8">
+                  <p class="text-xs font-bold tracking-[0.16em] text-copper">入浴料金・大人</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">550円 → 600円</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">2026年7月31日までは550円。東京都の改定により8月1日から600円。</p>
+                </div>
+                <div class="bg-white/85 p-6 sm:p-8">
+                  <p class="text-xs font-bold tracking-[0.16em] text-copper">子ども料金</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">200円 / 100円</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">中人200円、小人100円。年齢区分は現地掲示をご確認ください。</p>
+                </div>
+              </div>
+              <div class="border-t border-indigo/10 bg-paper p-6 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-8">
+                <div>
+                  <p class="font-bold text-indigo">〒116-0014 東京都荒川区東日暮里6-59-2</p>
+                  <p class="mt-2 text-sm text-ink/55">電話 03-3801-4022 · JR日暮里駅から徒歩約3分</p>
+                </div>
+                <a href="tel:+81338014022" class="mt-5 inline-flex min-h-11 items-center justify-center rounded-full border border-indigo/18 px-5 text-sm font-bold text-indigo transition hover:bg-indigo hover:text-white sm:mt-0">電話をかける</a>
+              </div>
+            </div>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-3">
+              <article class="rounded-2xl border border-indigo/10 bg-white p-6">
+                <span class="grid size-10 place-items-center rounded-full bg-mist text-indigo"><svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h10v5a5 5 0 0 1-10 0V3Zm0 18h10M12 13v8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                <h3 class="mt-5 font-bold text-indigo">入る前に</h3>
+                <p class="mt-2 text-sm leading-6 text-ink/58">券売機・受付で支払い、靴を下足箱へ。脱衣所ではスマートフォンの撮影を控えます。</p>
+              </article>
+              <article class="rounded-2xl border border-indigo/10 bg-white p-6">
+                <span class="grid size-10 place-items-center rounded-full bg-mist text-indigo"><svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 17c2.2-3 4.5-3 6.7 0s4.5 3 6.8 0M8 12c-3-4 3-5.5 0-9M15 12c-3-4 3-5.5 0-9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
+                <h3 class="mt-5 font-bold text-indigo">湯船の前に</h3>
+                <p class="mt-2 text-sm leading-6 text-ink/58">かけ湯をして体を洗い、髪が長い場合はまとめます。タオルは湯船に入れません。</p>
+              </article>
+              <article class="rounded-2xl border border-indigo/10 bg-white p-6">
+                <span class="grid size-10 place-items-center rounded-full bg-mist text-indigo"><svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3h8l1 5-2 3v9H9v-9L7 8l1-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 15h6" stroke="currentColor" stroke-width="1.6"/></svg></span>
+                <h3 class="mt-5 font-bold text-indigo">湯上がりに</h3>
+                <p class="mt-2 text-sm leading-6 text-ink/58">脱衣所へ戻る前に体を軽く拭き、水分補給を。ロビーで余韻を楽しみましょう。</p>
+              </article>
+            </div>
+
+            <div class="mt-6 rounded-2xl border border-copper/18 bg-copper/6 p-5 text-sm leading-7 text-ink/66">
+              <strong class="text-copper-dark">最新情報について：</strong> 営業時間、料金、備品、イベントは変更される場合があります。本ページは2026年7月30日時点の公開情報をもとに作成しています。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="food" class="section-pad bg-indigo text-white">
+      <div class="container-shell">
+        <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
+          <div>
+            <h2 class="section-title !text-white">湯上がりまでが、日暮里。</h2>
+          </div>
+          <p class="section-lead !text-white/66">手打ち麺、団子、立ち食いそば、純喫茶。観光地だけではない、駅前と暮らしの味を一日のコースに。</p>
+        </div>
+
+        <div class="mt-14 grid gap-4 md:grid-cols-2">
+          {foods.map((food) => (
+            <article class="group rounded-[1.7rem] border border-white/12 bg-white/6 p-7 transition hover:-translate-y-1 hover:bg-white/10 sm:p-8">
+              <div class="flex items-start justify-between gap-4">
+                <span class="font-mono text-xs tracking-[0.16em] text-aqua">{food.number}</span>
+                <span class="rounded-full border border-white/14 px-3 py-1.5 text-[0.65rem] font-bold tracking-[0.08em] text-white/65">{food.tag}</span>
+              </div>
+              <p class="mt-8 text-xs font-bold tracking-[0.14em] text-wood">{food.type}</p>
+              <h3 class="mt-2 font-serif text-3xl">{food.name}</h3>
+              <p class="mt-2 text-xs font-bold text-white/45">{food.distance}</p>
+              <p class="mt-5 text-sm leading-7 text-white/63">{food.copy}</p>
+            </article>
+          ))}
+        </div>
+        <p class="mt-6 text-xs leading-6 text-white/45">営業時間・定休日は各店で変更される場合があります。訪問当日に店頭または公式情報をご確認ください。</p>
+      </div>
+    </section>
+
+    <section id="access" class="section-pad overflow-hidden">
+      <div class="container-shell">
+        <div class="grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:gap-18">
+          <div>
+            <h2 class="section-title">日暮里駅から、湯のれんまで。</h2>
+            <p class="section-lead mt-7">最寄りは日暮里駅。JR、京成線、日暮里・舎人ライナーが集まり、成田空港からも移動しやすい立地です。</p>
+
+            <div class="mt-9 overflow-hidden rounded-[1.8rem] shadow-[0_28px_80px_rgba(13,29,50,.13)]">
+              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-noren.webp" alt="日暮里 斉藤湯の藍色ののれん" width="680" height="452" loading="lazy" />
+            </div>
+          </div>
+
+          <div class="space-y-5">
+            <article class="card-surface p-7 sm:p-9">
+              <div class="flex items-center gap-4">
+                <span class="grid size-12 place-items-center rounded-full bg-copper font-mono text-sm font-bold text-white">01</span>
+                <h3 class="font-serif text-2xl text-indigo">日暮里駅から徒歩約3分</h3>
+              </div>
+              <ol class="mt-7 space-y-4 border-l border-indigo/15 pl-6 text-sm leading-7 text-ink/66">
+                <li><strong class="text-indigo">日暮里駅「東口」</strong>へ出て、駅前ロータリー側へ進みます。</li>
+                <li>東日暮里方面へ、駅を背にして北東方向へ約250m歩きます。</li>
+                <li>藍色の「日暮里 斉藤湯」のれんと、明るいガラス張りの入口が目印です。</li>
+              </ol>
+            </article>
+
+            <div class="grid gap-5 md:grid-cols-2">
+              <article class="rounded-[1.6rem] border border-indigo/10 bg-paper p-7">
+                <p class="text-xs font-bold tracking-[0.14em] text-copper">成田空港から</p>
+                <h3 class="mt-3 font-serif text-2xl text-indigo">京成スカイライナー</h3>
+                <p class="mt-4 text-sm leading-7 text-ink/62">成田空港から日暮里へ乗り換えなし。東京都心まで最速36分の案内があり、日暮里駅到着後は徒歩約3分です。</p>
+              </article>
+              <article class="rounded-[1.6rem] border border-indigo/10 bg-paper p-7">
+                <p class="text-xs font-bold tracking-[0.14em] text-copper">都内主要駅から</p>
+                <h3 class="mt-3 font-serif text-2xl text-indigo">JR山手線が便利</h3>
+                <p class="mt-4 text-sm leading-7 text-ink/62">東京駅から約20分、新宿駅から約25分が目安。運行状況と乗り換えにより前後します。</p>
+              </article>
+            </div>
+
+            <article class="rounded-[1.6rem] bg-indigo p-7 text-white sm:p-9">
+              <div class="grid gap-7 sm:grid-cols-[1fr_auto] sm:items-center">
+                <div>
+                  <p class="text-sm leading-7 text-white/70">JR山手線・京浜東北線・常磐線、京成本線・成田スカイアクセス、日暮里・舎人ライナー。駅構内では「東口」を目印に。</p>
+                </div>
+                <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-12 items-center justify-center rounded-full bg-paper px-6 font-bold text-indigo transition hover:bg-white">現在地から案内</a>
+              </div>
+            </article>
+
+            <div class="grid gap-4 sm:grid-cols-3">
+              <div class="rounded-2xl border border-indigo/10 bg-white p-5"><p class="text-xs font-bold text-copper">自転車</p><p class="mt-2 text-sm leading-6 text-ink/58">駐輪スペースの状況は現地で確認し、周辺道路への放置は避けましょう。</p></div>
+              <div class="rounded-2xl border border-indigo/10 bg-white p-5"><p class="text-xs font-bold text-copper">車</p><p class="mt-2 text-sm leading-6 text-ink/58">専用駐車場を前提にせず、日暮里駅周辺の時間貸し駐車場を利用する計画が安心です。</p></div>
+              <div class="rounded-2xl border border-indigo/10 bg-white p-5"><p class="text-xs font-bold text-copper">大きな荷物</p><p class="mt-2 text-sm leading-6 text-ink/58">駅のコインロッカー利用を優先。施設の荷物預かりは条件を事前確認してください。</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="nearby" class="section-pad bg-paper">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">湯の前後に、下町を歩く。</h2>
+          </div>
+          <div class="max-w-xl rounded-2xl border border-indigo/10 bg-white/65 p-5 text-sm leading-7 text-ink/62">
+            <strong class="text-indigo">おすすめ順：</strong> 午後は繊維街や朝倉彫塑館へ。夕方に谷中銀座と夕やけだんだんを歩き、最後に斉藤湯で一日をほどくコースが自然です。
+          </div>
+        </div>
+
+        <div class="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {nearbySpots.map((spot, index) => (
+            <article class="group flex min-h-72 flex-col justify-between overflow-hidden rounded-[1.6rem] border border-indigo/10 bg-paper-light p-7 transition hover:-translate-y-1 hover:bg-white hover:shadow-[0_20px_55px_rgba(13,29,50,.09)]">
+              <div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="font-mono text-xs text-copper">0{index + 1}</span>
+                </div>
+                <h3 class="mt-9 font-serif text-3xl text-indigo">{spot.name}</h3>
+                <p class="mt-2 text-xs font-bold text-copper-dark">斉藤湯から {spot.time}</p>
+                <p class="mt-5 text-sm leading-7 text-ink/60">{spot.copy}</p>
+              </div>
+              <div class="mt-8 h-px w-full bg-gradient-to-r from-indigo/20 to-transparent transition group-hover:from-copper/50"></div>
+            </article>
+          ))}
+        </div>
+
+        <div class="mt-8 rounded-[1.8rem] bg-indigo p-7 text-white sm:p-10">
+          <div class="grid gap-8 lg:grid-cols-[1fr_1.35fr] lg:items-center">
+            <div>
+              <h3 class="font-serif text-3xl sm:text-4xl">日暮里、半日の湯めぐり散歩。</h3>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-4">
+              <div class="rounded-xl bg-white/7 p-4"><p class="text-xs text-white/42">14:00</p><p class="mt-2 font-bold">繊維街</p></div>
+              <div class="rounded-xl bg-white/7 p-4"><p class="text-xs text-white/42">16:00</p><p class="mt-2 font-bold">谷中散歩</p></div>
+              <div class="rounded-xl bg-white/7 p-4"><p class="text-xs text-white/42">18:00</p><p class="mt-2 font-bold">斉藤湯</p></div>
+              <div class="rounded-xl bg-white/7 p-4"><p class="text-xs text-white/42">19:30</p><p class="mt-2 font-bold">駅前ごはん</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <MemoryCardStudio />
+
+    <section id="faq" class="section-pad">
+      <div class="container-shell grid gap-12 lg:grid-cols-[0.68fr_1.32fr] lg:gap-20">
+        <div>
+          <h2 class="section-title">出発前の、小さな確認。</h2>
+          <p class="section-lead mt-7">銭湯は地域の日常の場所。分からないことは受付で静かに尋ねれば大丈夫です。</p>
+        </div>
+        <div class="divide-y divide-indigo/10 border-y border-indigo/10">
+          {faqs.map((faq, index) => (
+            <details class="group py-1">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 font-bold text-indigo sm:text-lg">
+                <span class="flex items-start gap-4"><span class="mt-0.5 font-mono text-xs font-normal text-copper">0{index + 1}</span>{faq.question}</span>
+                <span class="grid size-8 shrink-0 place-items-center rounded-full border border-indigo/15 text-indigo transition group-open:rotate-45 group-open:bg-indigo group-open:text-white">＋</span>
+              </summary>
+              <p class="max-w-3xl pb-7 pl-9 pr-12 text-sm leading-7 text-ink/62">{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="overflow-hidden bg-copper text-white">
+      <div class="container-shell grid min-h-[360px] items-center gap-10 py-16 lg:grid-cols-[1fr_auto]">
+        <div>
+          <p class="max-w-3xl font-serif text-4xl leading-tight sm:text-5xl lg:text-6xl">タオル一枚ぶん、<br />予定に余白を。</p>
+          <p class="mt-6 max-w-xl text-sm leading-7 text-white/70">最新の営業情報を確認したら、日暮里の町へ。湯上がりの一枚は、端末だけで作れる記念カードに残せます。</p>
+        </div>
+        <div class="flex flex-wrap gap-3 lg:flex-col">
+          <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-13 items-center justify-center rounded-full bg-paper px-7 font-bold text-indigo transition hover:bg-white">地図を開く</a>
+          <a href="#memory-card" class="inline-flex min-h-13 items-center justify-center rounded-full border border-white/30 px-7 font-bold transition hover:bg-white/10">記念カードを作る</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-indigo-deep py-10 text-white">
+    <div class="container-shell flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="grid size-9 place-items-center rounded-lg bg-paper text-lg font-bold text-copper">ゆ</span>
+          <span class="font-serif text-xl tracking-[0.1em]">日暮里 斉藤湯</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</BaseLayout>

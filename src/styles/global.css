@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", system-ui, sans-serif;
+  --font-serif: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
+  --color-ink: #172238;
+  --color-indigo: #142b4a;
+  --color-indigo-deep: #0d1d32;
+  --color-indigo-soft: #2e4b70;
+  --color-paper: #f5f0e6;
+  --color-paper-light: #fcfaf5;
+  --color-copper: #b95f40;
+  --color-copper-dark: #8f412b;
+  --color-wood: #d6b980;
+  --color-mist: #d9eef1;
+  --color-aqua: #8dcbd2;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  background: var(--color-paper-light);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: 88px;
+  background: var(--color-paper-light);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 8% 15%, rgba(141, 203, 210, 0.14), transparent 27rem),
+    radial-gradient(circle at 95% 45%, rgba(214, 185, 128, 0.12), transparent 25rem),
+    var(--color-paper-light);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  color: white;
+  background: var(--color-copper);
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  transform: translateY(-150%);
+  border-radius: 999px;
+  background: white;
+  padding: 0.75rem 1rem;
+  color: var(--color-indigo);
+  box-shadow: 0 8px 30px rgb(13 29 50 / 0.18);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.container-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.section-pad {
+  padding-block: clamp(4.5rem, 9vw, 8rem);
+}
+
+.section-title {
+  margin-top: 0;
+  max-width: 16ch;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4.7vw, 4.4rem);
+  font-weight: 600;
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+}
+
+.section-lead {
+  max-width: 42rem;
+  color: rgb(23 34 56 / 0.72);
+  font-size: clamp(1rem, 1.5vw, 1.16rem);
+  line-height: 2;
+}
+
+.card-surface {
+  border: 1px solid rgb(20 43 74 / 0.1);
+  border-radius: 1.5rem;
+  background: rgb(255 255 255 / 0.75);
+  box-shadow: 0 24px 70px rgb(13 29 50 / 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.focus-ring:focus-visible,
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgb(185 95 64 / 0.35);
+  outline-offset: 3px;
+}
+
+.washi-noise {
+  position: relative;
+  isolation: isolate;
+}
+
+.washi-noise::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.13;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+
+.steam-line {
+  animation: drift 6s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.steam-line:nth-child(2) {
+  animation-delay: -1.4s;
+}
+
+.steam-line:nth-child(3) {
+  animation-delay: -3.1s;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.3; }
+  50% { transform: translateY(-12px) scaleX(1.08); opacity: 0.8; }
+}
+
+.reveal {
+  animation: reveal 700ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
