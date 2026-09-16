@@ -1,0 +1,353 @@
+---
+// サーバー側で気象データを取得し、短時間キャッシュする。
+// フロントエンドには「傘がいるか」「どう過ごすか」だけを、やさしく伝える。
+interface WeatherData {
+  current: {
+    temperature_2m: number;
+    apparent_temperature: number;
+    relative_humidity_2m: number;
+    wind_speed_10m: number;
+    wind_direction_10m: number;
+    precipitation: number;
+    precipitation_probability: number;
+    uv_index: number;
+    weather_code: number;
+  };
+  daily: {
+    time: string[];
+    weather_code: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    precipitation_probability_max: number[];
+    uv_index_max: number[];
+  };
+}
+
+const LAT = 35.729335;
+const LON = 139.773033;
+
+// WMO 気象コード → 日本語ラベル・アイコン
+const WMO: Record<number, { label: string; icon: string }> = {
+  0: { label: '晴れ', icon: '☀️' },
+  1: { label: '大体晴れ', icon: '🌤️' },
+  2: { label: '薄曇り', icon: '⛅' },
+  3: { label: '曇り', icon: '☁️' },
+  45: { label: '霧', icon: '🌫️' },
+  48: { label: '霧氷', icon: '🌫️' },
+  51: { label: '弱い霧雨', icon: '🌦️' },
+  53: { label: '霧雨', icon: '🌦️' },
+  55: { label: '強い霧雨', icon: '🌦️' },
+  56: { label: '着氷性の霧雨', icon: '🌧️' },
+  57: { label: '強い着氷性の霧雨', icon: '🌧️' },
+  61: { label: '弱い雨', icon: '🌧️' },
+  63: { label: '雨', icon: '🌧️' },
+  65: { label: '強い雨', icon: '🌧️' },
+  66: { label: '着氷性の雨', icon: '🌧️' },
+  67: { label: '強い着氷性の雨', icon: '🌧️' },
+  71: { label: '弱い雪', icon: '🌨️' },
+  73: { label: '雪', icon: '🌨️' },
+  75: { label: '強い雪', icon: '🌨️' },
+  77: { label: '雪粒', icon: '🌨️' },
+  80: { label: 'にわか雨', icon: '🌦️' },
+  81: { label: 'にわか雨', icon: '🌧️' },
+  82: { label: '激しいにわか雨', icon: '⛈️' },
+  85: { label: 'にわか雪', icon: '🌨️' },
+  86: { label: '激しいにわか雪', icon: '🌨️' },
+  95: { label: '雷雨', icon: '⛈️' },
+  96: { label: '雷雨・ひょう', icon: '⛈️' },
+  99: { label: '激しい雷雨・ひょう', icon: '⛈️' },
+};
+
+const describe = (code: number) => WMO[code] ?? { label: 'その他', icon: '🌡️' };
+
+// m/s → ビューフォート風力階級
+function beaufort(ms: number): number {
+  const t = [0.5, 1.5, 3.3, 5.4, 7.9, 10.7, 13.8, 17.1, 20.7, 24.4, 28.4, 32.6];
+  for (let i = t.length - 1; i >= 0; i--) if (ms >= t[i]) return i + 1;
+  return 0;
+}
+
+// 天候から「そのまま行動に落とし込める」やさしい助言を組み立てる。
+// 各ブロックは条件を満たしたものだけ表示（満たさないものは隠す）。
+// ※ 公式の「気象警報」フィードは Open-Meteo 無料帯にないため、リスクは
+//   現在の天候（強雨・雷・濃霧・強風）から推測して表示する。
+interface Advice {
+  headline: string;
+  outfit: string[];
+  activity: string[];
+  items: string[];
+  risks: string[];
+}
+
+function buildAdvice(w: WeatherData): Advice {
+  const c = w.current;
+  const code = c.weather_code;
+  const prob = Math.max(
+    c.precipitation_probability ?? 0,
+    w.daily.precipitation_probability_max[0] ?? 0
+  );
+  const tmax = w.daily.temperature_2m_max[0];
+  const tmin = w.daily.temperature_2m_min[0];
+  const uv = Math.max(c.uv_index ?? 0, w.daily.uv_index_max[0] ?? 0);
+  const bf = beaufort(c.wind_speed_10m);
+
+  const isDrizzle = [51, 53, 55, 56, 57, 61, 80].includes(code);
+  const isRain = [63, 81].includes(code);
+  const isHeavyRain = [65, 66, 67, 82].includes(code);
+  const isThunder = [95, 96, 99].includes(code);
+  const isFog = [45, 48].includes(code);
+  const isClear = [0, 1].includes(code);
+  const isCloud = [2, 3].includes(code);
+
+  const outfit: string[] = [];
+  const activity: string[] = [];
+  const items: string[] = [];
+  const risks: string[] = [];
+
+  // 降水
+  if (prob >= 60 && !isDrizzle && !isRain && !isHeavyRain && !isThunder) {
+    outfit.push('雨が降る可能性が高め。折りたたみ傘があると安心です。');
+    activity.push('屋外の長時間散策は控えめに。駅前のアーケードや屋内スポットを組み合わせましょう。');
+    items.push('折りたたみ傘 / レインコート');
+  }
+  if (isDrizzle) {
+    outfit.push('小雨が残るので、足元は滑りやすい。歩幅を狭くして。');
+    activity.push('露天の外湯は雰囲氣が落ちます。湯上がりの散策は短めに。');
+    items.push('折りたたみ傘');
+  }
+  if (isRain || isHeavyRain) {
+    outfit.push('雨の日。防水の上着があると嬉しいです。');
+    activity.push('屋外の長時間はおすすめしません。銭湯やアーケード商店街など屋内中心に。');
+    items.push('レインコート（風が強い日は長傘より安全）');
+  }
+  if (isHeavyRain) {
+    risks.push('雨が強く降っています。低い土地や側溝の近くは避けて。');
+  }
+  if (isThunder) {
+    risks.push('雷に注意。木の下や水辺は避け、建物の中で待ちましょう。');
+    activity.push('水上や屋外のイベントは中止になりやすいです。');
+  }
+
+  // 高温・紫外線
+  if (tmax >= 32) {
+    outfit.push('気温が高い日。正午前後の外出は避け、軽く通気の良い服で。');
+    activity.push('屋外の滞在は短く。こまめに日陰と涼しい店内で休憩を。');
+    items.push('日焼け止め / 十分な飲み物 / 暑さ対策グッズ');
+  }
+  if (uv >= 5) {
+    outfit.push('紫外線が強いので、日差しを避けながら。');
+    items.push('日焼け止め / サングラス / つば広帽子');
+  }
+  if ((c.apparent_temperature ?? c.temperature_2m) - c.temperature_2m >= 3) {
+    outfit.push('体感気温は更に高く、暑さを強く感じます。');
+  } else if ((c.apparent_temperature ?? c.temperature_2m) - c.temperature_2m <= -3) {
+    outfit.push('実際の気温より寒く感じます。');
+  }
+
+  // 低温・寒暖差
+  if (tmax - tmin > 8) {
+    outfit.push('昼と夜で気温差が大きいので、羽織れる一枚があると便利。');
+  }
+  if (tmax <= 10) {
+    outfit.push('気温が低い日。しっかり防寒を。');
+    items.push('厚手のコート / マフラー');
+  }
+
+  // 風
+  if (bf >= 5 && bf <= 6) {
+    outfit.push('風がやや強いので、軽いウインドブレーカーがあると。');
+    activity.push('駅前の看板や工事現場、飛びやすい物に注意。');
+    items.push('帽子は飛びやすいので紐付きを');
+  }
+  if (bf >= 7) {
+    risks.push('強風の日。広告看板や飛来物、水辺の岩場から離れて。');
+    activity.push('屋外の高所や川沿いのイベントは中止になりやすいです。');
+  }
+
+  // 晴・曇
+  if (isClear) {
+    outfit.push('天気は良く、外歩きに適しています。');
+    activity.push('谷中の路地や夕やけだんだんなど、外の景色もおすすめ。');
+    items.push('日差し対策を忘れずに');
+  }
+  if (isCloud) {
+    outfit.push('日差しが和らいで、写真も映えやすい日。');
+    activity.push('長時間の屋外散策にも向いています。');
+  }
+
+  // 霧
+  if (isFog) {
+    risks.push('視界が悪いので、夜道の散策や運転には注意。');
+    activity.push('遠景・夜景は見えにくい日です。');
+    items.push('マスク（乾燥・靄対策に）');
+  }
+
+  // ひとこと（優先順位：リスク ＞ 雨 ＞ 暑 ＞ 寒 ＞ 晴 ＞ 標準）
+  let headline = '落ち着いた天気。普段通り、ゆったりと。';
+  if (risks.length) headline = '天候に注意が必要な日。安全を優先に、予定を柔軟に。';
+  else if (isThunder || isHeavyRain) headline = '雨が強いので、屋内中心の予定がおすすめ。';
+  else if (prob >= 50 || isDrizzle || isRain) headline = '傘があると安心。湯上がりの散策は軽めに。';
+  else if (tmax >= 32) headline = '暑い日。水分をとって、正午は控えめに。';
+  else if (tmax <= 10) headline = '寒い日。湯で体をあたためるのにぴったり。';
+  else if (isClear) headline = '良い天気。散策も湯も、気ままに楽しめます。';
+
+  return { headline, outfit, activity, items, risks };
+}
+
+// サーバー側キャッシュ（同一プロセス内で約30分間保持）
+const store = globalThis as unknown as { __saitoWeather?: { ts: number; data: WeatherData } };
+async function getWeather(): Promise<WeatherData> {
+  const now = Date.now();
+  if (store.__saitoWeather && now - store.__saitoWeather.ts < 30 * 60 * 1000) {
+    return store.__saitoWeather.data;
+  }
+  const url =
+    `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
+    `&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m,uv_index,precipitation_probability` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max` +
+    `&timezone=Asia%2FTokyo&forecast_days=7`;
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'saitoyu-guide/1.0' },
+    signal: AbortSignal.timeout(6000),
+  });
+  if (!res.ok) throw new Error(`weather ${res.status}`);
+  const data = (await res.json()) as WeatherData;
+  store.__saitoWeather = { ts: now, data };
+  return data;
+}
+
+let weather: WeatherData | null = null;
+try {
+  weather = await getWeather();
+} catch {
+  weather = null;
+}
+
+const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+function dayLabel(iso: string): { dow: string; md: string } {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return { dow: weekdays[dt.getUTCDay()], md: `${m}/${d}` };
+}
+---
+
+<section id="weather" class="section-pad bg-white">
+  <div class="container-shell">
+    <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+      <div>
+        <h2 class="section-title">今日の日暮里の空模様。</h2>
+      </div>
+      <p class="section-lead lg:max-w-lg">湯に行く前に、今の空と数日先の予報を。出かけるときに傘がいるか、どう過ごすかだけ、さくっと確認できます。</p>
+    </div>
+
+    {weather ? (() => {
+      const w = weather as WeatherData;
+      const adv = buildAdvice(w);
+      const showAdvice = adv.outfit.length > 0 || adv.activity.length > 0 || adv.items.length > 0;
+      const cur = describe(w.current.weather_code);
+      const bf = beaufort(w.current.wind_speed_10m);
+      const prob = Math.max(w.current.precipitation_probability ?? 0, w.daily.precipitation_probability_max[0] ?? 0);
+      return (
+        <div class="mt-12 grid gap-6 lg:grid-cols-[1fr_1.5fr]">
+          <div class="card-surface flex flex-col p-8 sm:p-10">
+            <div class="flex items-center gap-5">
+              <span class="text-6xl" aria-hidden="true">{cur.icon}</span>
+              <div>
+                <p class="font-serif text-6xl leading-none text-indigo">{Math.round(w.current.temperature_2m)}<span class="text-2xl">°</span></p>
+                <p class="mt-2 text-sm font-bold text-copper-dark">{cur.label}</p>
+              </div>
+            </div>
+            <div class="mt-8 grid grid-cols-2 gap-4 text-sm">
+              <div class="rounded-xl bg-paper-light p-4">
+                <p class="text-xs text-ink/50">体感温度</p>
+                <p class="mt-1 font-bold text-indigo">{Math.round(w.current.apparent_temperature)}°</p>
+              </div>
+              <div class="rounded-xl bg-paper-light p-4">
+                <p class="text-xs text-ink/50">湿度</p>
+                <p class="mt-1 font-bold text-indigo">{w.current.relative_humidity_2m}%</p>
+              </div>
+              <div class="rounded-xl bg-paper-light p-4">
+                <p class="text-xs text-ink/50">風速</p>
+                <p class="mt-1 font-bold text-indigo">{Math.round(w.current.wind_speed_10m)} m/s<span class="ml-1 text-xs font-normal text-ink/45">（{bf}級）</span></p>
+              </div>
+              <div class="rounded-xl bg-paper-light p-4">
+                <p class="text-xs text-ink/50">今日の降水確率</p>
+                <p class="mt-1 font-bold text-indigo">{prob}%</p>
+              </div>
+            </div>
+            <p class="mt-6 rounded-xl bg-aqua/12 px-5 py-4 text-sm font-bold leading-7 text-indigo">{adv.headline}</p>
+          </div>
+
+          <div class="overflow-hidden rounded-[1.8rem] border border-indigo/10 bg-paper-light p-6 sm:p-8">
+            <p class="text-xs font-bold tracking-[0.12em] text-copper-dark">週間予報（日暮里・東日暮里周辺）</p>
+            <ul class="mt-5 divide-y divide-indigo/8">
+              {w.daily.time.map((iso, i) => {
+                const ci = describe(w.daily.weather_code[i]);
+                const l = dayLabel(iso);
+                const isToday = i === 0;
+                return (
+                  <li class="flex items-center gap-4 py-3">
+                    <div class="w-16 shrink-0">
+                      <p class={`font-bold ${isToday ? 'text-indigo' : 'text-ink/60'}`}>{isToday ? '今日' : l.dow}</p>
+                      <p class="text-xs text-ink/45">{l.md}</p>
+                    </div>
+                    <span class="text-2xl" aria-hidden="true">{ci.icon}</span>
+                    <span class="w-20 text-sm text-ink/70">{ci.label}</span>
+                    <span class="ml-auto text-sm text-aqua">{w.daily.precipitation_probability_max[i]}%</span>
+                    <span class="w-24 text-right text-sm font-bold text-indigo">
+                      {Math.round(w.daily.temperature_2m_max[i])}° / {Math.round(w.daily.temperature_2m_min[i])}°
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+
+        {adv.risks.length > 0 && (
+          <div class="mt-6 rounded-2xl border border-red-200 bg-red-50 p-5 sm:p-6">
+            <p class="flex items-center gap-2 text-sm font-bold text-red-700"><span aria-hidden="true">⚠️</span>注意・リスク</p>
+            <ul class="mt-3 space-y-2 text-sm leading-7 text-red-700/90">
+              {adv.risks.map((r) => <li>{r}</li>)}
+            </ul>
+          </div>
+        )}
+
+        {showAdvice && (
+          <div class="mt-4 grid gap-4 md:grid-cols-3">
+            {adv.outfit.length > 0 && (
+              <div class="rounded-2xl border border-indigo/10 bg-white p-5">
+                <p class="flex items-center gap-2 text-sm font-bold text-indigo"><span aria-hidden="true">👕</span>服装・身支度</p>
+                <ul class="mt-3 space-y-2 text-sm leading-7 text-ink/65">
+                  {adv.outfit.map((t) => <li>{t}</li>)}
+                </ul>
+              </div>
+            )}
+            {adv.activity.length > 0 && (
+              <div class="rounded-2xl border border-indigo/10 bg-white p-5">
+                <p class="flex items-center gap-2 text-sm font-bold text-indigo"><span aria-hidden="true">🗺️</span>過ごし方</p>
+                <ul class="mt-3 space-y-2 text-sm leading-7 text-ink/65">
+                  {adv.activity.map((t) => <li>{t}</li>)}
+                </ul>
+              </div>
+            )}
+            {adv.items.length > 0 && (
+              <div class="rounded-2xl border border-indigo/10 bg-white p-5">
+                <p class="flex items-center gap-2 text-sm font-bold text-indigo"><span aria-hidden="true">🎒</span>持ち物</p>
+                <ul class="mt-3 space-y-2 text-sm leading-7 text-ink/65">
+                  {adv.items.map((t) => <li>{t}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      );
+    })() : (
+      <div class="card-surface mt-12 p-8 sm:p-10">
+        <p class="text-sm leading-7 text-ink/60">現在、天気情報を取得できません。しばらくしてからページを再読み込みしてください。営業状況は、施設へご確認ください。</p>
+      </div>
+    )}
+
+    <p class="mt-6 text-xs text-ink/40">気象データは公開気象APIの観測・予報値をもとに表示しています。実際の空模様と異なる場合があります。予報は目安です。</p>
+  </div>
+</section>

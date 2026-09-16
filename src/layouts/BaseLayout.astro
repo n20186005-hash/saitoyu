@@ -8,21 +8,39 @@ interface Props {
 }
 
 const {
-  title = '日暮里 斉藤湯｜湯気の向こう、日暮里の日常へ。',
-  description = 'JR日暮里駅から徒歩約3分。軟水、高濃度炭酸泉、露天岩風呂を楽しめる「日暮里 斉藤湯」の一日旅ガイド。アクセス、周辺グルメ、周辺散策、端末内で作れる旅の記念カードを掲載。',
+  title = '日暮里 斉藤湯（さいとうゆ）｜炭酸泉・露天・シルキー風呂の銭湯',
+  description = 'JR日暮里駅徒歩約3分。日暮里 斉藤湯（斎藤湯・齋藤湯・さいとうゆ）の公式ガイド。大人入浴料600円、営業14:00–23:00（金曜定休）。高濃度炭酸泉・露天岩風呂・シルキーバスを楽しめ、タオル等の備品もあり手ぶらで入浴可。アクセスと周辺散策も。',
   image = '/images/saito-yu-exterior.jpg',
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
-const imageURL = new URL(image, Astro.site ?? Astro.url.origin);
+const siteUrl = Astro.site ?? Astro.url.origin;
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+const imageURL = new URL(image, siteUrl);
+const mapShareUrl = 'https://maps.app.goo.gl/KxQ1wmrYxiDXovTa8';
+const govtTourismUrl = 'https://www.gotokyo.org/';
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'Place',
+  '@type': ['TouristAttraction', 'LocalBusiness'],
+  '@id': 'https://saitoyu.com/#attraction',
   name: '日暮里 斉藤湯',
-  alternateName: 'Nippori Saito-yu',
-  description: '東京都荒川区東日暮里にある銭湯。軟水、高濃度炭酸泉、露天岩風呂などを備える。',
+  alternateName: [
+    '斉藤湯',
+    '斎藤湯',
+    '齋藤湯',
+    '齊藤湯',
+    'さいとうゆ',
+    'Saitō Yu',
+    'Saito Yu',
+    '日暮里 斉藤湯 Saitō Yu',
+  ],
+  description: '東京都荒川区東日暮里にある銭湯（公衆浴場）。軟水、高濃度炭酸泉、露天岩風呂、シルキーバスなどを備え、JR日暮里駅から徒歩約3分。',
+  url: siteUrl.toString(),
   image: imageURL.toString(),
   telephone: '+81-3-3801-4022',
+  priceRange: '¥',
+  isAccessibleForFree: false,
+  publicAccess: true,
+  smokingAllowed: false,
   address: {
     '@type': 'PostalAddress',
     postalCode: '116-0014',
@@ -36,8 +54,16 @@ const schema = {
     latitude: 35.729335,
     longitude: 139.773033,
   },
-  publicAccess: true,
-  smokingAllowed: false,
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday', 'Sunday'],
+      opens: '14:00',
+      closes: '23:00',
+    },
+  ],
+  hasMap: mapShareUrl,
+  sameAs: [mapShareUrl, govtTourismUrl],
 };
 ---
 
@@ -54,6 +80,12 @@ const schema = {
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/favicon.svg" color="#142b4a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="斉藤湯ガイド" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ja_JP" />
     <meta property="og:title" content={title} />
@@ -71,6 +103,13 @@ const schema = {
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-HXM22WWPKP');
+    </script>
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
     </script>
   </head>
   <body>

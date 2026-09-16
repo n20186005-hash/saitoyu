@@ -1,12 +1,39 @@
 {
+  "id": "/",
   "name": "日暮里 斉藤湯ガイド",
   "short_name": "斉藤湯ガイド",
+  "description": "東京都荒川区日暮里「斉藤湯（Saitō Yu）」の観光・入浴ガイド。アクセス、周辺グルメ、周辺散策、旅の記念カードを掲載。",
   "lang": "ja",
+  "dir": "ltr",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "orientation": "portrait",
   "background_color": "#f4efe6",
   "theme_color": "#142b4a",
+  "categories": ["travel", "tourism", "lifestyle"],
   "icons": [
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
+    { "src": "/apple-touch-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "アクセス・交通",
+      "url": "/#access",
+      "description": "日暮里駅から斉藤湯までの道順"
+    },
+    {
+      "name": "周辺スポット",
+      "url": "/#nearby",
+      "description": "湯の前後に歩きたい下町スポット"
+    },
+    {
+      "name": "記念カードを作る",
+      "url": "/#memory-card",
+      "description": "旅の一枚をブラウザ内で作る"
+    }
   ]
 }

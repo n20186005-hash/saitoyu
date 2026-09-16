@@ -1,8 +1,36 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import MemoryCardStudio from '@/components/MemoryCardStudio.astro';
+import Weather from '@/components/Weather.astro';
 
 const mapUrl = 'https://www.google.com/maps/place/Sait%C5%8D+Yu/data=!4m7!3m6!1s0x60188e7f59a32057:0xe076bfad049e7598!8m2!3d35.729335!4d139.773033!16s%2Fg%2F11bw2j17zz';
+const mapEmbedSrc = 'https://www.google.com/maps?q=35.729335,139.773033&z=16&output=embed';
+const govtTourismUrl = 'https://www.gotokyo.org/';
+const rating = { score: 4.4, reviews: 1670, syncedLabel: '2026年9月' };
+
+const services = [
+  { icon: '🚻', title: 'トイレ・更衣', copy: '銭湯内に更衣室・洗い場・浴槽があります。駅構内や周辺にも公衆トイレがあり、小さな子連れでも安心です。' },
+  { icon: '🅿️', title: '駐車場', copy: '銭湯専用の駐車場は台数が限られています。周辺には時間貸しの駐車場（コインパーキング）が複数あります。' },
+  { icon: '🍜', title: '飲食', copy: '駅前や繊維街周辺に食堂・立ち食いそば・カフェ・ベーカリーなど、気軽に入れる店がそろいます。' },
+  { icon: '🛏️', title: '宿泊', copy: '日暮里・西日暮里・千駄木周辺にビジネスホテルやカプセル、旅館など滞在の拠点がそろいます。' },
+  { icon: '🏪', title: '商超', copy: '駅近くにコンビニエンスストアやスーパーがあり、飲み物や着替えの補充に便利です。' },
+  { icon: '🔌', title: '充電・給油', copy: '周辺には電気自動車の充電設備（商業施設や駐車場の併設など）やガソリンスタンドがあります。' },
+  { icon: '🧳', title: 'コインロッカー', copy: '日暮里駅にコインロッカーがあり、手ぶらで湯めぐりを楽しめます。' },
+  { icon: '🧴', title: '備品', copy: 'タオルやシャンプー等の備品は銭湯で販売・レンタルがあり、手ぶらでも入浴できます。' },
+];
+
+const seasons = [
+  { season: '春（3〜5月）', climate: '昼は暖かい日もありますが、朝晩は肌寒いことがあります。桜の時期は人出も増えます。', enjoy: '湯上がりに谷中の桜並木や夕やけだんだんを散歩。ぬるめの炭酸泉でほどけます。', note: '上着を。混雑時は時間帯をずらすとゆったり。' },
+  { season: '夏（6〜8月）', climate: '高温多湿。にわか雨の日も。日照時間が長く、夜型の過ごし方も。', enjoy: '高濃度炭酸泉と水風呂の往復が極楽。シルキーバスで汗を流します。', note: '熱中症予防にこまめな水分補給。タオルは多めに。' },
+  { season: '秋（9〜11月）', climate: '過ごしやすい日が続き、行楽に最適。朝夕涼しくなります。', enjoy: '谷中銀座や朝倉彫塑館を巡り、1日の終わりに湯でほどくコースが鉄板。', note: '薄手の羽織を。紅葉の時期は散策が特にいそがしい。' },
+  { season: '冬（12〜2月）', climate: '本格的な寒さ。空気が乾燥し、湯冷めが気になる季節です。', enjoy: '露天岩風呂は一番のごちそう。あつ湯と水風呂で体が目覚めます。', note: '上がってすぐに上着を。乾燥対策に入浴後の保湿を。' },
+];
+
+const plans = [
+  { icon: '👨‍👩‍👧', title: '親子家族', copy: 'シルキーバスやぬるめの炭酸泉なら小さい子も一緒に。浴室の壁画を探すゲームも楽しい。周辺の公園でひと休みをはさみ、無理のないペースで。' },
+  { icon: '📷', title: '写真・散歩', copy: '藍色ののれんと路地、谷中銀座、夕やけだんだん、朝倉彫塑館。朝の光と夕景の両方を狙うなら、湯はどちらかの前後に。' },
+  { icon: '🦽', title: '低体力・バリアフリー', copy: '日暮里駅周辺は比較的フラット。銭湯は平屋ですが、脱衣所等に段差がある場合も。無理なく短時間で、受付で相談を。' },
+];
 
 const bathFeatures = [
   {
@@ -98,7 +126,7 @@ const nearbySpots = [
 const faqs = [
   {
     question: '手ぶらでも入れますか？',
-    answer: 'シャンプーやボディソープの備え付けが案内されており、貸しタオルもあります。料金や在庫は当日現地でご確認ください。',
+    answer: 'シャンプー・ボディソープの備え付けがあり、タオルは貸出（40円）とバスタオル貸出（60円）、オリジナルタオル販売（400円）があります。湯上がりの生ビール（中濃度・600円）も。入浴料のほか、クレジットカード・交通IC・QR決済にも対応しています。詳細は当日現地でご確認ください。',
   },
   {
     question: 'サウナはありますか？',
@@ -114,9 +142,30 @@ const faqs = [
   },
   {
     question: '営業時間は何時までですか？',
-    answer: '東京銭湯の案内では14:00〜23:30、最終受付23:00です。一方で23:00閉店とする案内もあるため、遅い時間に向かう場合は当日確認してください。金曜は定休日です。',
+    answer: '14:00〜23:00、金曜は定休日です。営業時間は変更される場合があるため、遅い時間に向かう際は当日の公式情報でご確認ください。',
   },
 ];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.question,
+    acceptedAnswer: { '@type': 'Answer', text: f.answer },
+  })),
+};
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: '日本', item: 'https://saitoyu.com/' },
+    { '@type': 'ListItem', position: 2, name: '東京都', item: 'https://saitoyu.com/' },
+    { '@type': 'ListItem', position: 3, name: '荒川区', item: 'https://saitoyu.com/' },
+    { '@type': 'ListItem', position: 4, name: '日暮里 斉藤湯', item: 'https://saitoyu.com/' },
+  ],
+};
 ---
 
 <BaseLayout>
@@ -128,6 +177,7 @@ const faqs = [
       </a>
 
       <nav class="hidden items-center gap-7 text-[0.76rem] font-bold tracking-[0.08em] text-white/72 lg:flex" aria-label="メインナビゲーション">
+        <a class="transition hover:text-white" href="#weather">天気</a>
         <a class="transition hover:text-white" href="#baths">お風呂</a>
         <a class="transition hover:text-white" href="#guide">利用案内</a>
         <a class="transition hover:text-white" href="#food">周辺グルメ</a>
@@ -153,9 +203,10 @@ const faqs = [
   </header>
 
   <main id="main">
+    <span id="attraction" class="sr-only" aria-hidden="true"></span>
     <section id="top" class="relative min-h-[760px] overflow-hidden bg-indigo pt-[72px] text-white lg:min-h-screen">
       <div class="absolute inset-0">
-        <img class="h-full w-full object-cover object-center" src="/images/saito-yu-exterior.webp" alt="日暮里 斉藤湯の入口とのれん" width="640" height="480" fetchpriority="high" />
+        <img class="h-full w-full object-cover object-center" src="/images/saito-yu-exterior.webp" alt="日暮里 斉藤湯（斉藤湯）の入口と藍色ののれん - 東京都日暮里" width="640" height="480" />
         <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,25,45,.95)_0%,rgba(9,25,45,.78)_42%,rgba(9,25,45,.28)_75%,rgba(9,25,45,.55)_100%)]"></div>
         <div class="absolute inset-0 bg-[linear-gradient(0deg,rgba(9,25,45,.82)_0%,transparent_46%)]"></div>
       </div>
@@ -173,6 +224,16 @@ const faqs = [
             </h1>
             <p class="mt-8 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
               軟水のやさしさ、高濃度炭酸泉の細かな泡、露天岩風呂を抜ける夜風。旅の予定を一度ほどいて、東京の「いつものお風呂」に入る時間です。
+            </p>
+            <div class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span class="inline-flex items-center gap-2 rounded-full border border-white/22 px-4 py-2 text-sm font-bold text-white">
+                <svg class="size-4 text-wood" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
+                4.4
+                <span class="font-normal text-white/65">· Google 1,670件の評価</span>
+              </span>
+            </div>
+            <p class="mt-2 text-xs leading-5 text-white/55">
+              評価・口コミ数は Google マップ（Google Maps）のユーザー評価と同じものを 2026 年 9 月に同期 · <a class="underline underline-offset-2 transition hover:text-white" href={mapUrl} target="_blank" rel="noopener noreferrer">Google マップですべての評価を見る↗</a>
             </p>
             <div class="mt-9 flex flex-wrap gap-3">
               <a href="#guide" class="inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-paper px-6 font-bold text-indigo transition hover:-translate-y-0.5 hover:bg-white">
@@ -205,13 +266,15 @@ const faqs = [
       </div>
     </section>
 
+    <Weather />
+
     <section id="story" class="section-pad overflow-hidden">
       <div class="container-shell">
         <div class="grid items-center gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-20">
           <div class="relative">
             <div class="absolute -left-14 -top-14 -z-10 size-64 rounded-full border border-aqua/35"></div>
             <div class="relative overflow-hidden rounded-[2rem] shadow-[0_30px_90px_rgba(13,29,50,.16)]">
-              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-bath.webp" alt="斉藤湯の明るい浴室" width="680" height="452" loading="lazy" />
+              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-bath.webp" alt="日暮里 斉藤湯（斉藤湯）の明るい浴室 - 東京都日暮里" width="680" height="452" loading="lazy" />
               <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-indigo/85 to-transparent p-7 pt-24 text-white">
                 <p class="font-serif text-2xl">清潔さと、下町の親しみ。</p>
               </div>
@@ -224,7 +287,7 @@ const faqs = [
           <div>
             <h2 class="section-title">駅前の速さから、湯船の時間へ。</h2>
             <div class="mt-8 space-y-6 text-base leading-8 text-ink/72">
-              <p>日暮里 斉藤湯は、JR・京成の日暮里駅から歩いて約3分。空港や都心からアクセスしやすい場所にありながら、扉の向こうには地域の日常が続いています。</p>
+              <p>日暮里 斉藤湯（斉藤湯 / Saitō Yu）は、日暮里の中心にある公衆浴場です。JR・京成の日暮里駅から歩いて約3分で、空港や都心からアクセスしやすい場所にありながら、扉の向こうには地域の日常が続いています。</p>
               <p>館内で使う水は、肌あたりのやわらかな軟水と案内されています。高濃度炭酸泉、シルキーバス、露天岩風呂、あつ湯、水風呂など、温度と感触の違いを行き来しながら、自分のペースを見つけられる銭湯です。</p>
             </div>
             <div class="mt-9 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-indigo/10 bg-indigo/10 sm:grid-cols-4">
@@ -233,6 +296,58 @@ const faqs = [
               <div class="bg-paper-light p-5"><p class="font-serif text-3xl text-indigo">炭酸</p><p class="mt-2 text-xs leading-5 text-ink/55">ぬるめでゆっくり</p></div>
               <div class="bg-paper-light p-5"><p class="font-serif text-3xl text-indigo">手ぶら</p><p class="mt-2 text-xs leading-5 text-ink/55">備品・貸タオル</p></div>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviews" class="section-pad bg-paper">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">Google マップの評価と口コミ。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">日暮里 斉藤湯（斉藤湯 / Saitō Yu）の評価は、Google マップのユーザー評価を反映しています。評価・口コミはページ上でのみ紹介し、構造化データ（JSON-LD）には含めません。</p>
+        </div>
+
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          <div class="card-surface flex flex-col justify-between p-8 sm:p-10">
+            <div class="flex items-end gap-5">
+              <p class="font-serif text-7xl leading-none text-indigo">{rating.score}</p>
+              <div class="pb-2">
+                <div class="flex gap-1 text-copper" aria-hidden="true">
+                  <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
+                  <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
+                  <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
+                  <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
+                  <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" opacity="0.4"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
+                </div>
+                <p class="mt-2 text-sm font-bold text-indigo">Google マップのユーザー評価</p>
+              </div>
+            </div>
+            <p class="mt-6 text-sm leading-7 text-ink/60">
+              {rating.reviews.toLocaleString('ja-JP')} 件の評価に基づく星 {rating.score}（5点満点）。評価・口コミ数は 2026 年 9 月時点の Google マップと同じものを同期しています。
+            </p>
+            <p class="mt-4 border-t border-indigo/10 pt-4 text-xs leading-6 text-ink/45">
+              本ページの評価は Google マップのユーザー評価を 2026 年 9 月に同期したものです。評価・口コミの著作権は各投稿者ならびに Google マップに帰属します。
+            </p>
+            <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-indigo px-6 font-bold text-white transition hover:-translate-y-0.5 hover:bg-indigo-deep">
+              Google マップですべての評価を見る
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 5h5v5M19 5l-8 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M18 13v5a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" stroke="currentColor" stroke-width="1.7"/></svg>
+            </a>
+          </div>
+
+          <div class="overflow-hidden rounded-[1.8rem] border border-indigo/10 bg-white shadow-[0_28px_80px_rgba(13,29,50,.08)]">
+            <iframe
+              src={mapEmbedSrc}
+              width="100%"
+              height="100%"
+              style="border:0; min-height:340px;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="日暮里 斉藤湯のGoogle マップ（Google Maps）"
+            ></iframe>
           </div>
         </div>
       </div>
@@ -266,7 +381,7 @@ const faqs = [
 
         <div class="mt-8 grid gap-5 md:grid-cols-[1.1fr_0.9fr]">
           <div class="overflow-hidden rounded-[1.75rem]">
-            <img class="h-full min-h-72 w-full object-cover" src="/images/saito-yu-silky.webp" alt="白い微細な泡が特徴のシルキーバス" width="680" height="506" loading="lazy" />
+            <img class="h-full min-h-72 w-full object-cover" src="/images/saito-yu-silky.webp" alt="日暮里 斉藤湯（斉藤湯）のシルキーバス - 白い微細な泡" width="680" height="506" loading="lazy" />
           </div>
           <div class="flex flex-col justify-center rounded-[1.75rem] bg-indigo p-8 text-white sm:p-10">
             <p class="font-serif text-3xl leading-snug">「長く入る」より、<br />「心地よく上がる」。</p>
@@ -283,7 +398,7 @@ const faqs = [
             <h2 class="section-title">初めてでも、いつものように。</h2>
             <p class="section-lead mt-7">券を買い、靴を預け、体を洗ってから湯船へ。日本の銭湯は、少しの作法を知るだけでぐっと気楽になります。</p>
             <div class="mt-9 overflow-hidden rounded-[1.75rem]">
-              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-wash-area.webp" alt="斉藤湯の洗い場" width="680" height="452" loading="lazy" />
+              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-wash-area.webp" alt="日暮里 斉藤湯（斉藤湯）の洗い場 - 東京都日暮里" width="680" height="452" loading="lazy" />
             </div>
           </div>
 
@@ -292,8 +407,8 @@ const faqs = [
               <div class="grid gap-px bg-indigo/10 sm:grid-cols-2">
                 <div class="bg-white/85 p-6 sm:p-8">
                   <p class="text-xs font-bold tracking-[0.16em] text-copper">営業時間</p>
-                  <p class="mt-3 font-serif text-3xl text-indigo">14:00–23:30</p>
-                  <p class="mt-2 text-sm leading-6 text-ink/58">最終受付 23:00。案内元により23:00閉店との表記もあるため、遅い時間は当日確認を。</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">14:00–23:00</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">金曜は定休日。営業時間は変更される場合があるため、遅い時間は当日の公式情報でご確認ください。</p>
                 </div>
                 <div class="bg-white/85 p-6 sm:p-8">
                   <p class="text-xs font-bold tracking-[0.16em] text-copper">定休日</p>
@@ -302,13 +417,13 @@ const faqs = [
                 </div>
                 <div class="bg-white/85 p-6 sm:p-8">
                   <p class="text-xs font-bold tracking-[0.16em] text-copper">入浴料金・大人</p>
-                  <p class="mt-3 font-serif text-3xl text-indigo">550円 → 600円</p>
-                  <p class="mt-2 text-sm leading-6 text-ink/58">2026年7月31日までは550円。東京都の改定により8月1日から600円。</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">600円</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">東京都の改定により2026年8月1日から600円（それ以前は550円）。</p>
                 </div>
                 <div class="bg-white/85 p-6 sm:p-8">
                   <p class="text-xs font-bold tracking-[0.16em] text-copper">子ども料金</p>
-                  <p class="mt-3 font-serif text-3xl text-indigo">200円 / 100円</p>
-                  <p class="mt-2 text-sm leading-6 text-ink/58">中人200円、小人100円。年齢区分は現地掲示をご確認ください。</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">300円 / 200円</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">中学生300円、小学生200円、未就学児は無料。年齢区分は現地掲示をご確認ください。</p>
                 </div>
               </div>
               <div class="border-t border-indigo/10 bg-paper p-6 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-8">
@@ -381,7 +496,7 @@ const faqs = [
             <p class="section-lead mt-7">最寄りは日暮里駅。JR、京成線、日暮里・舎人ライナーが集まり、成田空港からも移動しやすい立地です。</p>
 
             <div class="mt-9 overflow-hidden rounded-[1.8rem] shadow-[0_28px_80px_rgba(13,29,50,.13)]">
-              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-noren.webp" alt="日暮里 斉藤湯の藍色ののれん" width="680" height="452" loading="lazy" />
+              <img class="aspect-[4/3] w-full object-cover" src="/images/saito-yu-noren.webp" alt="日暮里 斉藤湯（斉藤湯）の藍色ののれん - 東京都日暮里" width="680" height="452" loading="lazy" />
             </div>
           </div>
 
@@ -425,6 +540,98 @@ const faqs = [
               <div class="rounded-2xl border border-indigo/10 bg-white p-5"><p class="text-xs font-bold text-copper">車</p><p class="mt-2 text-sm leading-6 text-ink/58">専用駐車場を前提にせず、日暮里駅周辺の時間貸し駐車場を利用する計画が安心です。</p></div>
               <div class="rounded-2xl border border-indigo/10 bg-white p-5"><p class="text-xs font-bold text-copper">大きな荷物</p><p class="mt-2 text-sm leading-6 text-ink/58">駅のコインロッカー利用を優先。施設の荷物預かりは条件を事前確認してください。</p></div>
             </div>
+          </div>
+        </div>
+      </div>
+    <section class="section-pad">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">日暮里 斉藤湯の場所。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">東京都荒川区東日暮里（JR日暮里駅から徒歩約3分）。周辺の「日暮里繊維街」や「谷中銀座商店街」とあわせて、散歩の拠点に。</p>
+        </div>
+        <div class="mt-12 overflow-hidden rounded-[1.8rem] border border-indigo/10 shadow-[0_28px_80px_rgba(13,29,50,.08)]">
+          <iframe
+            src={mapEmbedSrc}
+            width="100%"
+            height="450"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="日暮里 斉藤湯のGoogle マップ（Google Maps）"
+          ></iframe>
+        </div>
+        <p class="mt-4 text-xs leading-6 text-ink/45">
+          <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="font-bold text-indigo underline underline-offset-2 transition hover:text-copper-dark">Google マップですべての評価を見る↗</a>
+        </p>
+      </div>
+    </section>
+
+    <section id="transport" class="section-pad bg-paper">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">空港・駅からのアクセス徹底ガイド。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">成田・羽田どちらからでも乗り換え1回で到着。下町の駅だから、降りてからの道のりも短いです。</p>
+        </div>
+
+        <div class="mt-12 grid gap-4 lg:grid-cols-2">
+          <article class="card-surface p-8">
+            <div class="flex items-center gap-3">
+              <span class="grid size-11 place-items-center rounded-full bg-indigo/8 text-xl" aria-hidden="true">✈️</span>
+              <h3 class="font-serif text-2xl text-indigo">成田空港から</h3>
+            </div>
+            <ul class="mt-5 space-y-3 text-sm leading-7 text-ink/68">
+              <li><strong class="text-indigo">京成線を利用：</strong> 成田空港駅から京成スカイライナーまたはアクセスエクスプレスで「日暮里駅（京成線）」へ。所要約60〜80分。</li>
+              <li><strong class="text-indigo">JRを利用：</strong> 成田エクスプレスで東京駅へ出て、JR山手線（内回り）で日暮里駅へ。所要約70〜90分。</li>
+            </ul>
+          </article>
+
+          <article class="card-surface p-8">
+            <div class="flex items-center gap-3">
+              <span class="grid size-11 place-items-center rounded-full bg-indigo/8 text-xl" aria-hidden="true">✈️</span>
+              <h3 class="font-serif text-2xl text-indigo">羽田空港から</h3>
+            </div>
+            <ul class="mt-5 space-y-3 text-sm leading-7 text-ink/68">
+              <li><strong class="text-indigo">京急・都営線を利用：</strong> 京急線で品川・泉岳寺経由、または都営浅草線直通で日暮里方面へ。所要約40〜60分。</li>
+              <li><strong class="text-indigo">JRを利用：</strong> 羽田からモノレールまたは京急で浜松町・品川へ出て、JR山手線で日暮里駅へ。所要約50〜70分。</li>
+            </ul>
+          </article>
+
+          <article class="card-surface p-8">
+            <div class="flex items-center gap-3">
+              <span class="grid size-11 place-items-center rounded-full bg-indigo/8 text-xl" aria-hidden="true">🚃</span>
+              <h3 class="font-serif text-2xl text-indigo">電車（都内から）</h3>
+            </div>
+            <ul class="mt-5 space-y-3 text-sm leading-7 text-ink/68">
+              <li><strong class="text-indigo">JR：</strong> 山手線・京浜東北線「日暮里駅」。</li>
+              <li><strong class="text-indigo">京成：</strong> 京成本線「京成日暮里駅」（スカイライナー停車）。</li>
+              <li><strong class="text-indigo">日暮里・舎人ライナー：</strong> 足立・荒川方面からのアクセスに便利。</li>
+            </ul>
+          </article>
+
+          <article class="card-surface p-8">
+            <div class="flex items-center gap-3">
+              <span class="grid size-11 place-items-center rounded-full bg-indigo/8 text-xl" aria-hidden="true">🚕</span>
+              <h3 class="font-serif text-2xl text-indigo">タクシー・バス</h3>
+            </div>
+            <ul class="mt-5 space-y-3 text-sm leading-7 text-ink/68">
+              <li><strong class="text-indigo">タクシー：</strong> 日暮里駅に乗り場があります。駅から斉藤湯までは約1km・数分のため、荷物が多い日にも安心。</li>
+              <li><strong class="text-indigo">路線バス：</strong> 都営バス等が日暮里駅周辺に停車。詳細は運行事業者へご確認ください。</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="mt-6 rounded-[1.8rem] bg-indigo p-7 text-white sm:p-10">
+          <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p class="text-xs font-bold tracking-[0.12em] text-aqua">駅からの道順</p>
+              <h3 class="mt-2 font-serif text-3xl sm:text-4xl">北口・西口から徒歩約3分。</h3>
+            </div>
+            <p class="max-w-xl text-sm leading-7 text-white/72">改札を出て商店街へ。藍色の「ゆ」のれんが見えたら、そこが日暮里 斉藤湯です。迷ったら駅員や周辺の方へ気軽にお声がけを。</p>
           </div>
         </div>
       </div>
@@ -473,6 +680,155 @@ const faqs = [
       </div>
     </section>
 
+    <section id="services" class="section-pad bg-white">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">旅の前後に、知っておきたい施設。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">特定の店名はあげません。あくまで「どんなタイプの施設があるか」を中立にまとめました。</p>
+        </div>
+
+        <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {services.map((s) => (
+            <article class="rounded-2xl border border-indigo/10 bg-paper-light p-6">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">{s.icon}</span>
+                <h3 class="font-serif text-xl text-indigo">{s.title}</h3>
+              </div>
+              <p class="mt-3 text-sm leading-7 text-ink/62">{s.copy}</p>
+            </article>
+          ))}
+        </div>
+        <p class="mt-6 text-xs leading-6 text-ink/40">施設の有無・営業時間は変わることがあります。最新情報は現地あるいは各事業者へご確認ください。</p>
+      </div>
+    </section>
+
+    <section id="seasons" class="section-pad bg-paper">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">季節で選ぶ、すごし方。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">気象庁の平年値（30年平均）を参考に、日暮里周辺の傾向をまとめました。年によって変動します。</p>
+        </div>
+
+        <div class="mt-12 overflow-hidden rounded-[1.8rem] border border-indigo/10 bg-white">
+          <table class="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr class="bg-indigo text-white">
+                <th class="px-5 py-4 font-bold">季節</th>
+                <th class="px-5 py-4 font-bold">気候の特徴</th>
+                <th class="px-5 py-4 font-bold">湯の楽しみ方</th>
+                <th class="px-5 py-4 font-bold">持ち物・注意</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-indigo/10">
+              {seasons.map((row) => (
+                <tr class="align-top">
+                  <td class="px-5 py-5 font-bold text-indigo">{row.season}</td>
+                  <td class="px-5 py-5 text-ink/65">{row.climate}</td>
+                  <td class="px-5 py-5 text-ink/65">{row.enjoy}</td>
+                  <td class="px-5 py-5 text-ink/65">{row.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6 rounded-[1.8rem] bg-aqua/8 p-6 sm:p-8">
+          <p class="text-sm font-bold text-indigo">サイエンス豆知識：軟水のやさしさ</p>
+          <p class="mt-2 text-sm leading-7 text-ink/62">日暮里 斉藤湯は給湯に軟水を使っており、肌あたりがやわらかいのが特徴です。銭湯の多くは地域の水道水を軟水化・加温して供しており、湯上がりの肌の感触にも表れます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" class="section-pad bg-white">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">旅の組み方は、誰と行くかで。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">ペースや関心に合わせて、三つの視点からコースの立て方を。</p>
+        </div>
+
+        <div class="mt-12 grid gap-4 lg:grid-cols-3">
+          {plans.map((p) => (
+            <article class="flex flex-col rounded-2xl border border-indigo/10 bg-paper-light p-7">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl" aria-hidden="true">{p.icon}</span>
+                <h3 class="font-serif text-xl text-indigo">{p.title}</h3>
+              </div>
+              <p class="mt-4 text-sm leading-7 text-ink/62">{p.copy}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="routes" class="section-pad bg-paper">
+      <div class="container-shell">
+        <div class="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+          <div>
+            <h2 class="section-title">半日／全日、ふたつのモデルコース。</h2>
+          </div>
+          <p class="section-lead lg:max-w-lg">下町を丸ごと味わうなら、湯は「一日の区切り」にするのがおすすめです。</p>
+        </div>
+
+        <div class="mt-12 grid gap-4 lg:grid-cols-2">
+          <article class="card-surface p-8">
+            <p class="text-xs font-bold tracking-[0.12em] text-copper-dark">半日コース・湯けむり散歩</p>
+            <ol class="mt-5 space-y-3 text-sm leading-7 text-ink/68">
+              <li><strong class="text-indigo">14:00</strong> 日暮里繊維街をぶらり</li>
+              <li><strong class="text-indigo">16:00</strong> 谷中銀座でひと休み</li>
+              <li><strong class="text-indigo">18:00</strong> 斉藤湯で一日をほどく</li>
+              <li><strong class="text-indigo">19:30</strong> 駅前でごはん</li>
+            </ol>
+          </article>
+          <article class="card-surface p-8">
+            <p class="text-xs font-bold tracking-[0.12em] text-copper-dark">全日コース・下町丸ごと</p>
+            <ol class="mt-5 space-y-3 text-sm leading-7 text-ink/68">
+              <li><strong class="text-indigo">午前</strong> 谷中・団子坂を散策</li>
+              <li><strong class="text-indigo">昼</strong> 駅前でランチ</li>
+              <li><strong class="text-indigo">14:00</strong> 朝倉彫塑館をめぐる</li>
+              <li><strong class="text-indigo">16:00</strong> 繊維街で買い物</li>
+              <li><strong class="text-indigo">18:00</strong> 斉藤湯 → 夜の夕やけだんだん</li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="culture" class="section-pad bg-indigo-deep text-white">
+      <div class="container-shell">
+        <h2 class="section-title !text-white">日暮里 斉藤湯を知る：町湯の文化とマナー。</h2>
+        <p class="section-lead mt-7 !text-white/66">温泉地ではなく「町の湯」です。歴史とマナーを知ると、ふらりと寄るひとときがもっと豊かになります。</p>
+
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          <article class="rounded-2xl border border-white/12 bg-white/6 p-7">
+            <h3 class="font-serif text-2xl">地名の由来と、下町の町湯</h3>
+            <p class="mt-4 text-sm leading-7 text-white/70">「日暮里（にっぽり）」の地名には「日暮らしの里」「夕暮れの里」など諸説あります。東京の下町では公衆浴場（銭湯）が地域の「日常の湯」として親しまれ、日暮里もその一角。長年、地域に根ざした町湯として営まれてきました。</p>
+          </article>
+          <article class="rounded-2xl border border-white/12 bg-white/6 p-7">
+            <h3 class="font-serif text-2xl">軟水という特徴（サイエンス）</h3>
+            <p class="mt-4 text-sm leading-7 text-white/70">給湯に軟水を使い、肌あたりがやわらかいのが特徴です。銭湯は地域の水道水を軟水化・加温して供しており、湯上がりの感触の違いとして楽しめます。</p>
+          </article>
+          <article class="rounded-2xl border border-white/12 bg-white/6 p-7">
+            <h3 class="font-serif text-2xl">銭湯のマナー</h3>
+            <ul class="mt-4 space-y-2 text-sm leading-7 text-white/70">
+              <li>脱衣所では静かに、タオルは湯に浸さず頭や腰の上へ。</li>
+              <li>洗い場では桶で体を流してから、湯船では語らずゆったりと。</li>
+              <li>刺青がある方は受付で確認を。施設によって対応が異なります。</li>
+            </ul>
+          </article>
+          <article class="rounded-2xl border border-white/12 bg-white/6 p-7">
+            <h3 class="font-serif text-2xl">訪問者の責任</h3>
+            <p class="mt-4 text-sm leading-7 text-white/70">節水やゴミの持ち帰り、周辺住民との共生を心がけましょう。他のお客様のプライバシーに配慮し、撮影は遠慮するか声をかけてから。古くからの「日常の湯」を、次の世代へ。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <MemoryCardStudio />
 
     <section id="faq" class="section-pad">
@@ -493,6 +849,70 @@ const faqs = [
           ))}
         </div>
       </div>
+
+      <div class="container-shell">
+        <div class="mt-2 rounded-2xl border border-indigo/10 bg-paper-light p-6 sm:p-8">
+          <p class="text-xs font-bold tracking-[0.16em] text-copper">OVERSEAS VISITORS / 海外からの方へ</p>
+          <div class="mt-4 grid gap-6 sm:grid-cols-2">
+            <div>
+              <p class="text-sm font-bold text-indigo">English</p>
+              <p class="mt-2 text-sm leading-7 text-ink/62">Saito-yu is a neighborhood public bath (sento) in Nippori, Tokyo, a 3-min walk from JR Nippori Stn. Adult admission ¥600 (cash, credit cards, transit IC &amp; QR payment accepted). Open 14:00–23:00, closed Fridays. Soft-water baths, high-carbonated spring, open-air rock bath, silky bath. Towels &amp; shampoo available, so you can come empty-handed. Please keep quiet and no photos in the bathing area.</p>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-indigo">繁體中文</p>
+              <p class="mt-2 text-sm leading-7 text-ink/62">斉藤湯是東京日暮里的一間街區公眾浴場（錢湯），從 JR 日暮里站步行約 3 分鐘。大人入浴費 600 日圓（現金／信用卡／交通 IC／QR 皆可）。營業 14:00–23:00，週五公休。備有軟水、高濃度碳酸泉、露天岩風呂、絲綢浴池。現場可租借毛巾與洗髮用品，空手也能入浴。浴室內請保持安靜、勿拍照。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script type="application/ld+json" set:html={JSON.stringify(faqSchema)}></script>
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)}></script>
+
+    <section id="sources" class="section-pad bg-indigo-deep text-white">
+      <div class="container-shell">
+        <h2 class="section-title !text-white">出典・参照</h2>
+        <p class="section-lead mt-7 !text-white/66">本ページの情報は公開済みの公式・団体資料をもとに作成し、評価は Google マップのユーザー評価を同期しています。</p>
+
+        <nav class="mt-8 flex flex-wrap items-center gap-2 text-xs font-bold tracking-[0.06em] text-white/55" aria-label="パンくずリスト">
+          <a class="transition hover:text-white" href="/">ホーム</a>
+          <span aria-hidden="true">›</span>
+          <span>日本</span>
+          <span aria-hidden="true">›</span>
+          <span>東京都</span>
+          <span aria-hidden="true">›</span>
+          <span>荒川区</span>
+          <span aria-hidden="true">›</span>
+          <span class="text-white">日暮里 斉藤湯</span>
+        </nav>
+
+        <ul class="mt-10 grid gap-4 sm:grid-cols-2">
+          <li class="rounded-2xl border border-white/12 bg-white/6 p-6">
+            <p class="text-xs font-bold tracking-[0.12em] text-aqua">評価・口コミ</p>
+            <p class="mt-3 text-sm leading-7 text-white/72">同期元：Google マップ（Google Maps）・同期 2026 年 9 月</p>
+            <p class="mt-3 text-xs leading-6 text-white/50">評価は Google マップのユーザー評価を 2026 年 9 月に同期したものです。著作権は各投稿者ならびに Google マップに帰属します。</p>
+            <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-aqua underline underline-offset-2 transition hover:text-white">Google マップですべての評価を見る↗</a>
+          </li>
+          <li class="rounded-2xl border border-white/12 bg-white/6 p-6">
+            <p class="text-xs font-bold tracking-[0.12em] text-aqua">施設情報</p>
+            <p class="mt-3 text-sm leading-7 text-white/72">東京銭湯「日暮里 斉藤湯」</p>
+            <a href="https://www.1010.or.jp/map-en/item/item-cnt-118" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-aqua underline underline-offset-2 transition hover:text-white">東京銭湯（1010.or.jp）↗</a>
+          </li>
+          <li class="rounded-2xl border border-white/12 bg-white/6 p-6">
+            <p class="text-xs font-bold tracking-[0.12em] text-aqua">周辺・観光</p>
+            <p class="mt-3 text-sm leading-7 text-white/72">日暮里繊維街、谷中銀座商店街などの周辺情報</p>
+            <a href={govtTourismUrl} target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-aqua underline underline-offset-2 transition hover:text-white">GO TOKYO（公式観光ポータル）↗</a>
+          </li>
+          <li class="rounded-2xl border border-white/12 bg-white/6 p-6">
+            <p class="text-xs font-bold tracking-[0.12em] text-aqua">写真・取材</p>
+            <p class="mt-3 text-sm leading-7 text-white/72">施設公開写真および地域取材をもとにレイアウト作成</p>
+            <a href="https://sheage.jp/article/14995" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-aqua underline underline-offset-2 transition hover:text-white">Sheage「斉藤湯」取材記事↗</a>
+          </li>
+        </ul>
+
+        <p class="mt-8 text-xs leading-6 text-white/40">営業時間・料金・備品は変更される場合があります。最新情報は施設へご確認ください。評価・口コミは 2026 年 9 月時点の Google マップと同じものを同期しています。</p>
+      </div>
     </section>
 
     <section class="overflow-hidden bg-copper text-white">
@@ -507,6 +927,20 @@ const faqs = [
         </div>
       </div>
     </section>
+
+    <aside class="fixed inset-x-0 bottom-0 z-40 border-t border-indigo/12 bg-white/96 backdrop-blur md:hidden" aria-label="クイックアクセス">
+      <div class="grid grid-cols-3">
+        <a href="#guide" class="flex flex-col items-center justify-center gap-1 py-3 text-xs font-bold text-indigo">
+          <span aria-hidden="true" class="text-lg">🕒</span>営業・料金
+        </a>
+        <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-center gap-1 border-x border-indigo/10 py-3 text-xs font-bold text-indigo">
+          <span aria-hidden="true" class="text-lg">🗺️</span>地図
+        </a>
+        <a href="tel:+81338014022" class="flex flex-col items-center justify-center gap-1 py-3 text-xs font-bold text-indigo">
+          <span aria-hidden="true" class="text-lg">📞</span>電話
+        </a>
+      </div>
+    </aside>
   </main>
 
   <footer class="bg-indigo-deep py-10 text-white">

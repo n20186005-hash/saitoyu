@@ -1,11 +1,15 @@
 # 情報・写真出典
 
-調査日：2026-07-30
+調査日：2026-07-30  
+評価・口コミ同期日：2026-09（Google マップ / Google Maps ユーザー評価）
 
 ## 施設情報
 
 - 東京銭湯「日暮里 斉藤湯」  
   https://www.1010.or.jp/map-en/item/item-cnt-118
+- 評価・口コミ：Google マップ（Google Maps）ユーザー評価を 2026 年 9 月時点で同期  
+  https://maps.app.goo.gl/KxQ1wmrYxiDXovTa8  
+  ※評価・口コミの著作権は各投稿者ならびに Google マップに帰属します。
 - 東京都交通局「Nippori Saitou-yu」  
   https://www.kotsu.metro.tokyo.jp/sp/newsevent/pickup/1801sentou/index_en.html
 - 荒川区施設案内（営業時間等は公開前に再確認）
@@ -14,7 +18,7 @@
 
 ## 交通・地域
 
-- GO TOKYO「Nippori – Tokyo’s Fabric Town」  
+- GO TOKYO「Nippori – Tokyo’s Fabric Town」（東京都公式観光ポータル）  
   https://www.gotokyo.org/en/destinations/northern-tokyo/nippori/index.html
 - 京成電鉄 Skyliner e-ticket  
   https://www.keisei.co.jp/keisei/tetudou/skyliner/e-ticket/zht/

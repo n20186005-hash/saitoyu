@@ -1,7 +1,28 @@
+# 依存関係（アップロード不要）
 node_modules/
+.pnpm-store/
+
+# ビルド成果物（wrangler が生成・アップロード）
 dist/
 .astro/
+
+# Cloudflare / Wrangler のローカル状態
 .wrangler/
-.dev.vars
+.cfworker/
+.miniflare/
+
+# 環境変数・シークレット
 .env
+.env.*
+.dev.vars
+
+# ログ
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS / エディタ
 .DS_Store
+Thumbs.db
+.idea/
+.vscode/
