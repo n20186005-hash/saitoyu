@@ -6,7 +6,7 @@ import Weather from '@/components/Weather.astro';
 const mapUrl = 'https://www.google.com/maps/place/Sait%C5%8D+Yu/data=!4m7!3m6!1s0x60188e7f59a32057:0xe076bfad049e7598!8m2!3d35.729335!4d139.773033!16s%2Fg%2F11bw2j17zz';
 const mapEmbedSrc = 'https://www.google.com/maps?q=35.729335,139.773033&z=16&output=embed';
 const govtTourismUrl = 'https://www.gotokyo.org/';
-const rating = { score: 4.4, reviews: 1670, syncedLabel: '2026年9月' };
+const rating = { score: 4.4, reviews: 1685 };
 
 const services = [
   { icon: '🚻', title: 'トイレ・更衣', copy: '銭湯内に更衣室・洗い場・浴槽があります。駅構内や周辺にも公衆トイレがあり、小さな子連れでも安心です。' },
@@ -130,7 +130,7 @@ const faqs = [
   },
   {
     question: 'サウナはありますか？',
-    answer: 'サウナを主目的とする施設ではありません。高濃度炭酸泉、露天岩風呂、シルキーバス、あつ湯、水風呂など、浴槽の違いを楽しむ銭湯です。',
+    answer: '斉藤湯にサウナはありません。東京銭湯（1010.or.jp）の公式施設情報にもサウナの記載はなく、高濃度炭酸泉、露天岩風呂、シルキーバス、あつ湯、水風呂など、浴槽の違いを楽しむ銭湯です。施設の変更がないかは、当日の公式情報でご確認ください。',
   },
   {
     question: '大きな荷物を持って行けますか？',
@@ -217,23 +217,24 @@ const breadcrumbSchema = {
             <div class="mb-7 flex flex-wrap items-center gap-3 text-[0.68rem] font-extrabold tracking-[0.18em] text-white/65">
               <span class="rounded-full border border-white/22 px-3 py-2">JR日暮里駅 徒歩約3分</span>
               <span class="rounded-full border border-white/22 px-3 py-2">金曜定休</span>
+              <span class="rounded-full border border-copper/45 px-3 py-2 text-wood">非公式ガイド</span>
             </div>
-            <p class="font-serif text-lg tracking-[0.18em] text-wood sm:text-2xl">湯気の向こう、</p>
-            <h1 class="mt-2 font-serif text-[clamp(3.6rem,10vw,8.8rem)] font-semibold leading-[0.92] tracking-[-0.065em]">
-              日暮里の<br /><span class="ml-[0.55em]">日常へ。</span>
+            <h1 class="mt-2 font-serif text-[clamp(3rem,9vw,7.4rem)] font-semibold leading-[0.96] tracking-[-0.05em]">
+              日暮里 斉藤湯
             </h1>
+            <p class="mt-4 font-serif text-lg tracking-[0.16em] text-wood sm:text-2xl">にっぽり さいとうゆ｜日暮里駅近くの銭湯ガイド</p>
             <p class="mt-8 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
               軟水のやさしさ、高濃度炭酸泉の細かな泡、露天岩風呂を抜ける夜風。旅の予定を一度ほどいて、東京の「いつものお風呂」に入る時間です。
             </p>
             <div class="mt-7 flex flex-wrap items-center gap-x-3 gap-y-2">
               <span class="inline-flex items-center gap-2 rounded-full border border-white/22 px-4 py-2 text-sm font-bold text-white">
                 <svg class="size-4 text-wood" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 18.6 6.1 21.2l1.2-6.6L2.5 9l6.6-.9L12 2Z"/></svg>
-                4.4
-                <span class="font-normal text-white/65">· Google 1,670件の評価</span>
+                {rating.score}
+                <span class="font-normal text-white/65">· Google {rating.reviews.toLocaleString('ja-JP')}件の評価</span>
               </span>
             </div>
             <p class="mt-2 text-xs leading-5 text-white/55">
-              評価・口コミ数は Google マップ（Google Maps）のユーザー評価と同じものを 2026 年 9 月に同期 · <a class="underline underline-offset-2 transition hover:text-white" href={mapUrl} target="_blank" rel="noopener noreferrer">Google マップですべての評価を見る↗</a>
+              評価・口コミ数は Google マップ（Google Maps）のユーザー評価と同じものを 2026 年 10 月に同期 · <a class="underline underline-offset-2 transition hover:text-white" href={mapUrl} target="_blank" rel="noopener noreferrer">Google マップですべての評価を見る↗</a>
             </p>
             <div class="mt-9 flex flex-wrap gap-3">
               <a href="#guide" class="inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-paper px-6 font-bold text-indigo transition hover:-translate-y-0.5 hover:bg-white">
@@ -326,10 +327,10 @@ const breadcrumbSchema = {
               </div>
             </div>
             <p class="mt-6 text-sm leading-7 text-ink/60">
-              {rating.reviews.toLocaleString('ja-JP')} 件の評価に基づく星 {rating.score}（5点満点）。評価・口コミ数は 2026 年 9 月時点の Google マップと同じものを同期しています。
+              {rating.reviews.toLocaleString('ja-JP')} 件の評価に基づく星 {rating.score}（5点満点）。評価・口コミ数は 2026 年 10 月時点の Google マップと同じものを同期しています。
             </p>
             <p class="mt-4 border-t border-indigo/10 pt-4 text-xs leading-6 text-ink/45">
-              本ページの評価は Google マップのユーザー評価を 2026 年 9 月に同期したものです。評価・口コミの著作権は各投稿者ならびに Google マップに帰属します。
+              本ページの評価は Google マップのユーザー評価を 2026 年 10 月に同期したものです。評価・口コミの著作権は各投稿者ならびに Google マップに帰属します。
             </p>
             <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-indigo px-6 font-bold text-white transition hover:-translate-y-0.5 hover:bg-indigo-deep">
               Google マップですべての評価を見る
@@ -418,12 +419,17 @@ const breadcrumbSchema = {
                 <div class="bg-white/85 p-6 sm:p-8">
                   <p class="text-xs font-bold tracking-[0.16em] text-copper">入浴料金・大人</p>
                   <p class="mt-3 font-serif text-3xl text-indigo">600円</p>
-                  <p class="mt-2 text-sm leading-6 text-ink/58">東京都の改定により2026年8月1日から600円（それ以前は550円）。</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">東京都の料金統制額改定にともない、2026年8月1日から600円（それ以前は550円）。</p>
                 </div>
                 <div class="bg-white/85 p-6 sm:p-8">
-                  <p class="text-xs font-bold tracking-[0.16em] text-copper">子ども料金</p>
-                  <p class="mt-3 font-serif text-3xl text-indigo">300円 / 200円</p>
-                  <p class="mt-2 text-sm leading-6 text-ink/58">中学生300円、小学生200円、未就学児は無料。年齢区分は現地掲示をご確認ください。</p>
+                  <p class="text-xs font-bold tracking-[0.16em] text-copper">入浴料金・中人</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">200円</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">中学生（中人）が対象。確定は現地掲示をご確認ください。</p>
+                </div>
+                <div class="bg-white/85 p-6 sm:p-8">
+                  <p class="text-xs font-bold tracking-[0.16em] text-copper">入浴料金・小人</p>
+                  <p class="mt-3 font-serif text-3xl text-indigo">100円</p>
+                  <p class="mt-2 text-sm leading-6 text-ink/58">小学生（小人）が対象。未就学児は無料です。</p>
                 </div>
               </div>
               <div class="border-t border-indigo/10 bg-paper p-6 sm:flex sm:items-center sm:justify-between sm:gap-6 sm:p-8">
@@ -454,7 +460,7 @@ const breadcrumbSchema = {
             </div>
 
             <div class="mt-6 rounded-2xl border border-copper/18 bg-copper/6 p-5 text-sm leading-7 text-ink/66">
-              <strong class="text-copper-dark">最新情報について：</strong> 営業時間、料金、備品、イベントは変更される場合があります。本ページは2026年7月30日時点の公開情報をもとに作成しています。
+              <strong class="text-copper-dark">非公式・独立した観光情報ガイド：</strong> 本ページは施設の公式サイトではなく、第三者が公開情報をまとめた独立ガイドです。営業時間、料金、備品、イベントは変更される場合があり、2026年10月14日時点の公開情報をもとに作成しています。最新・正確な情報は、東京銭湯（1010.or.jp）などの公式情報や施設へご確認ください。
             </div>
           </div>
         </div>
@@ -890,8 +896,8 @@ const breadcrumbSchema = {
         <ul class="mt-10 grid gap-4 sm:grid-cols-2">
           <li class="rounded-2xl border border-white/12 bg-white/6 p-6">
             <p class="text-xs font-bold tracking-[0.12em] text-aqua">評価・口コミ</p>
-            <p class="mt-3 text-sm leading-7 text-white/72">同期元：Google マップ（Google Maps）・同期 2026 年 9 月</p>
-            <p class="mt-3 text-xs leading-6 text-white/50">評価は Google マップのユーザー評価を 2026 年 9 月に同期したものです。著作権は各投稿者ならびに Google マップに帰属します。</p>
+            <p class="mt-3 text-sm leading-7 text-white/72">同期元：Google マップ（Google Maps）・同期 2026 年 10 月</p>
+            <p class="mt-3 text-xs leading-6 text-white/50">評価は Google マップのユーザー評価を 2026 年 10 月に同期したものです。著作権は各投稿者ならびに Google マップに帰属します。</p>
             <a href={mapUrl} target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-aqua underline underline-offset-2 transition hover:text-white">Google マップですべての評価を見る↗</a>
           </li>
           <li class="rounded-2xl border border-white/12 bg-white/6 p-6">
@@ -911,7 +917,7 @@ const breadcrumbSchema = {
           </li>
         </ul>
 
-        <p class="mt-8 text-xs leading-6 text-white/40">営業時間・料金・備品は変更される場合があります。最新情報は施設へご確認ください。評価・口コミは 2026 年 9 月時点の Google マップと同じものを同期しています。</p>
+        <p class="mt-8 text-xs leading-6 text-white/40">営業時間・料金・備品は変更される場合があります。最新情報は施設へご確認ください。評価・口コミは 2026 年 10 月時点の Google マップと同じものを同期しています。</p>
       </div>
     </section>
 
@@ -950,7 +956,18 @@ const breadcrumbSchema = {
           <span class="grid size-9 place-items-center rounded-lg bg-paper text-lg font-bold text-copper">ゆ</span>
           <span class="font-serif text-xl tracking-[0.1em]">日暮里 斉藤湯</span>
         </div>
+        <p class="mt-3 max-w-xl text-xs leading-6 text-white/45">
+          本サイトは施設の公式サイトではない、第三者による非公式の独立観光情報ガイドです。掲載情報は 2026 年 10 月 14 日時点の公開資料をもとにしており、営業時間・料金・備品などは変更される場合があります。最新・正確な情報は
+          <a class="text-aqua underline underline-offset-2 transition hover:text-white" href="https://www.1010.or.jp/map-en/item/item-cnt-118" target="_blank" rel="noopener noreferrer">東京銭湯（1010.or.jp）↗</a>
+          などの公式情報や施設へご確認ください。
+        </p>
       </div>
+      <nav class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-bold tracking-[0.06em] text-white/55" aria-label="フッターナビ">
+        <a class="transition hover:text-white" href="#guide">利用案内</a>
+        <a class="transition hover:text-white" href="#access">アクセス</a>
+        <a class="transition hover:text-white" href="#faq">よくある質問</a>
+        <a class="transition hover:text-white" href="#sources">出典・参照</a>
+      </nav>
     </div>
   </footer>
 </BaseLayout>
